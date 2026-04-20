@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C35 TGP2 Alpha Playtest Feedback Dashboard</title>
-    <!-- 使用 Tailwind CSS 加速样式开发 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -34,17 +33,16 @@
         .survey-quote-card { background-color: #1e1e24; border-left: 4px solid transparent; padding: 12px; margin-bottom: 12px; border-radius: 4px 8px 8px 4px; }
         .quote-good { border-left-color: #22c55e; } .quote-bad { border-left-color: #ef4444; } .quote-idea { border-left-color: #3a86ff; }
         
-        /* 云端同步指示器 */
+        /* Sync Indicator */
         #sync-indicator { transition: opacity 0.3s ease; }
         .syncing { opacity: 1; } .synced { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body class="min-h-screen p-6 relative">
 
-    <!-- 云端同步状态提示 -->
     <div id="sync-indicator" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-[#3a86ff] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg z-50 synced flex items-center gap-2">
         <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        Syncing to Cloud...
+        Connecting...
     </div>
 
     <header class="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-700 pb-6">
@@ -108,9 +106,9 @@
         </div>
         <h2 id="survey-title-text" class="text-2xl font-bold text-white mb-6 uppercase tracking-wider">Verbatim Tester Feedback</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#22c55e] text-white font-bold py-3 text-center" id="col-good">What Went Well</div><div class="p-4 flex flex-col" id="container-good"></div></div>
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#ef4444] text-white font-bold py-3 text-center" id="col-bad">What Went Wrong</div><div class="p-4 flex flex-col" id="container-bad"></div></div>
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#3a86ff] text-white font-bold py-3 text-center" id="col-idea">Even Better If...</div><div class="p-4 flex flex-col" id="container-idea"></div></div>
+            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#22c55e] text-white font-bold py-3 text-center" id="col-good">🌟 What Went Well</div><div class="p-4 flex flex-col" id="container-good"></div></div>
+            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#ef4444] text-white font-bold py-3 text-center" id="col-bad">❌ What Went Wrong</div><div class="p-4 flex flex-col" id="container-bad"></div></div>
+            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#3a86ff] text-white font-bold py-3 text-center" id="col-idea">💡 Even Better If...</div><div class="p-4 flex flex-col" id="container-idea"></div></div>
         </div>
     </div>
 
@@ -159,7 +157,9 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 语言字典
+        // ==============================================
+        // 核心数据字典
+        // ==============================================
         const i18n = {
             en: { mainTitle: 'C35 TGP2 Alpha Playtest Feedback Dashboard', tabBacklog: 'Feedback Backlog', tabSurvey: 'Survey Report', addFb: 'Add Feedback', fltAll: 'All', fltCamera: 'Camera', fltControls: 'Controls', fltLd: 'Level Design', fltArt: 'Art', fltAudio: 'Audio', fltTech: 'Tech', fltItems: 'Items', fltUi: 'UI', modalNew: 'Log New Feedback', modalEdit: 'Edit Feedback', deleteConfirm: 'Delete this feedback?', actionItem: 'Action Item', markAction: 'Action Item (Pin to Top)', survMetrics: 'Quantitative Metrics', survDemo: 'Insights', survText: 'Verbatim Feedback', colGood: 'Went Well', colBad: 'Went Wrong', colIdea: 'Better If', btnCancel: 'Cancel', btnSave: 'Save Issue', statusLabel: 'Status', statusTodo: 'To Do', statusInprogress: 'In Progress', statusReview: 'Review', statusDone: 'Done', demoPlaytime: 'Weekly Playtime: Majority 10-20 hrs', demoCam: 'Camera Satisfaction: Majority Dissatisfied', demoClarity: 'Track Clarity: Confusion in Gear Track' },
             zh: { mainTitle: 'C35 TGP2 Alpha 游戏测试反馈看板', tabBacklog: '问题积压 (Backlog)', tabSurvey: '问卷数据', addFb: '添加反馈', fltAll: '全部', fltCamera: '相机', fltControls: '控制', fltLd: '关卡设计', fltArt: '美术', fltAudio: '音效', fltTech: '技术', fltItems: '道具', fltUi: '界面', modalNew: '记录新反馈', modalEdit: '编辑反馈', deleteConfirm: '确定删除吗？', actionItem: '待办行动项', markAction: '标记为行动项 (置顶)', survMetrics: '定量数据评分', survDemo: '核心发现', survText: '测试原文反馈', colGood: '优异部分', colBad: '存在问题', colIdea: '改进建议', btnCancel: '取消', btnSave: '保存数据', statusLabel: '开发进度状态', statusTodo: '待办', statusInprogress: '开发中', statusReview: '审核中', statusDone: '已完成', demoPlaytime: '每周时长: 多数10-20小时', demoCam: '相机满意度: 多数极不满意', demoClarity: '赛道清晰度: 齿轮赛道迷路' }
@@ -210,7 +210,7 @@
         windowContext.itemToDelete = null;
 
         // ==============================================
-        // 这是完全正确拼装好的 Firebase 专属配置
+        // Firebase 专属配置与完整防崩溃逻辑
         // ==============================================
         const fallbackConfig = {
             apiKey: "AIzaSyDdH9c9bGJWFcWultxFkXYqWrM_y4l2NNE",
@@ -228,28 +228,6 @@
         let db = null;
         let appId = 'c35-tgp2-dashboard-db';
 
-        if (isCloudEnabled) {
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : fallbackConfig;
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            db = getFirestore(app);
-            if (typeof __app_id !== 'undefined') appId = __app_id;
-
-            async function initAuth() {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            }
-
-            initAuth();
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) setupRealtimeSync();
-            });
-        }
-
         function showSync(isSyncing) {
             const ind = document.getElementById('sync-indicator');
             if(isSyncing) { ind.classList.remove('synced'); ind.classList.add('syncing'); }
@@ -262,9 +240,37 @@
             else statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-gray-500 inline-block"></span> Local Mode (No BaaS Config)`;
         }
 
-        // ==============================================
-        // 修复版的云同步挂载函数 (解决了转圈卡死问题)
-        // ==============================================
+        if (isCloudEnabled) {
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : fallbackConfig;
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            db = getFirestore(app);
+            if (typeof __app_id !== 'undefined') appId = __app_id;
+
+            // ⚠️ 核心修复：完整的 try-catch，拦截一切 auth/api-key-not-valid 报错
+            async function initAuth() {
+                try {
+                    showSync(true);
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.warn("Firebase Auth Warning (Fallback to Local):", error.message);
+                    // 遇到错误立刻关闭转圈并降级！
+                    showSync(false);
+                    loadFeedbacksLocal();
+                }
+            }
+
+            initAuth();
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) setupRealtimeSync();
+            });
+        }
+
         function setupRealtimeSync() {
             showSync(true);
             updateCloudStatusText('cloud');
@@ -290,7 +296,8 @@
                     showSync(false);
                 }
             }, (error) => {
-                console.error("Cloud Sync Error:", error);
+                // ⚠️ 核心修复：捕获数据库读写权限报错
+                console.warn("Cloud Sync Warning (Permissions/Key):", error.message);
                 updateCloudStatusText('local');
                 loadFeedbacksLocal();
                 showSync(false);
@@ -299,10 +306,15 @@
 
         async function saveToDatabase(item) {
             if (isCloudEnabled && db) {
-                showSync(true);
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', item.id);
-                await setDoc(docRef, item);
-                showSync(false);
+                try {
+                    showSync(true);
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', item.id);
+                    await setDoc(docRef, item);
+                    showSync(false);
+                } catch (err) {
+                    console.error("Save failed, using local DB:", err);
+                    saveToStorage(); renderGrid(); showSync(false);
+                }
             } else {
                 saveToStorage();
                 renderGrid();
@@ -311,10 +323,16 @@
 
         async function deleteFromDatabase(id) {
             if (isCloudEnabled && db) {
-                showSync(true);
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', id);
-                await deleteDoc(docRef);
-                showSync(false);
+                try {
+                    showSync(true);
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', id);
+                    await deleteDoc(docRef);
+                    showSync(false);
+                } catch (err) {
+                    console.error("Delete failed, using local DB:", err);
+                    windowContext.allFeedbacks = windowContext.allFeedbacks.filter(f => f.id !== id);
+                    saveToStorage(); renderGrid(); showSync(false);
+                }
             } else {
                 windowContext.allFeedbacks = windowContext.allFeedbacks.filter(f => f.id !== id);
                 saveToStorage();
@@ -335,6 +353,7 @@
                 windowContext.allFeedbacks = JSON.parse(JSON.stringify(defaultFeedbacks));
             }
             renderGrid();
+            showSync(false); // 确保在本地模式下完全关闭转圈
         }
         function saveToStorage() { localStorage.setItem('tgp2_master_feedbacks', JSON.stringify(windowContext.allFeedbacks)); }
 
