@@ -56,9 +56,9 @@
         .tag.ui { background-color: var(--accent-ui); color: white; }
         
         .tag.action-item { background-color: #ef4444; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .tag.survey-good { background-color: #22c55e; color: white; }
-        .tag.survey-bad { background-color: #ef4444; color: white; }
-        .tag.survey-idea { background-color: #3a86ff; color: white; }
+        .tag.survey-good { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
+        .tag.survey-bad { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .tag.survey-neutral { background-color: rgba(156, 163, 175, 0.2); color: #d1d5db; border: 1px solid #9ca3af; }
 
         /* 开发状态选择器 / Status Dropdown styling */
         .status-select {
@@ -90,6 +90,12 @@
         
         /* 隐藏类 / Utility */
         .hidden-view { display: none !important; }
+
+        /* 自定义滚动条用于文本回复区 / Custom Scrollbar for Text Areas */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
 <body class="min-h-screen p-6">
@@ -151,104 +157,190 @@
     <!-- ========================================== -->
     <!-- 视图 2：问卷报告面板 / VIEW 2: SURVEY VIEW  -->
     <!-- ========================================== -->
-    <div id="view-survey" class="hidden-view max-w-7xl mx-auto">
-        <!-- (数据矩阵区 - 内容保持不变) -->
-        <div class="bg-[#2b2b36] rounded-xl p-8 mb-8 border border-gray-700 shadow-lg">
-            <h2 id="survey-title-metrics" class="text-2xl font-bold text-white mb-6 border-b border-gray-600 pb-2">Quantitative Metrics (Mean out of 5.00)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- 评分条 / Rating Bars -->
-                <div class="flex flex-col gap-4">
+    <div id="view-survey" class="hidden-view max-w-7xl mx-auto space-y-8">
+        
+        <!-- 头部数据矩阵区 / Top Metrics Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- 玩家画像与概览 / Player Demographics -->
+            <div class="bg-[#2b2b36] rounded-xl p-6 border border-gray-700 shadow-lg col-span-1 flex flex-col">
+                <h2 id="survey-title-demo" class="text-xl font-bold text-white mb-4 border-b border-gray-600 pb-2 flex items-center gap-2">
+                    👥 Player Demographics
+                </h2>
+                <div class="flex-1 space-y-4">
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-600">
+                        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">Weekly Playtime</span>
+                        <div class="text-white text-sm font-medium">Majority plays <span class="text-[#fb8500] font-bold">10-20 hours</span></div>
+                    </div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-600">
+                        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">Racing Game Familiarity</span>
+                        <div class="text-white text-sm font-medium">Very Mixed <span class="text-gray-400 text-xs">(Slightly to Extremely)</span></div>
+                    </div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-600">
+                        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-2">Game Adjectives (Q11)</span>
+                        <div class="flex flex-wrap">
+                            <span class="tag survey-good">Exciting</span>
+                            <span class="tag survey-good">Fun</span>
+                            <span class="tag survey-good">Visually Appealing</span>
+                            <span class="tag survey-bad">Confusing</span>
+                            <span class="tag survey-bad">Jerky Motion</span>
+                            <span class="tag survey-bad">Incomplete</span>
+                            <span class="tag survey-neutral">Difficult</span>
+                            <span class="tag survey-neutral">Stressful</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心游戏体验评分 / Core Experience Ratings -->
+            <div class="bg-[#2b2b36] rounded-xl p-6 border border-gray-700 shadow-lg col-span-1 lg:col-span-2">
+                <h2 id="survey-title-metrics" class="text-xl font-bold text-white mb-4 border-b border-gray-600 pb-2 flex items-center gap-2">
+                    🎮 Core Experience (Mean out of 5.00)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                     <div>
                         <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Overall Fun</span><span class="text-[#fb8500] font-bold">3.78</span></div>
-                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#fb8500] h-3 rounded-full" style="width: 75.6%"></div></div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Art and Visuals</span><span class="text-[#ffbe0b] font-bold">3.65</span></div>
-                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#ffbe0b] h-3 rounded-full" style="width: 73%"></div></div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5"><div class="bg-[#fb8500] h-2.5 rounded-full" style="width: 75.6%"></div></div>
                     </div>
                     <div>
                         <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Level of Difficulty</span><span class="text-[#3a86ff] font-bold">3.22</span></div>
-                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#3a86ff] h-3 rounded-full" style="width: 64.4%"></div></div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5"><div class="bg-[#3a86ff] h-2.5 rounded-full" style="width: 64.4%"></div></div>
                     </div>
                     <div>
                         <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Stability</span><span class="text-[#06d6a0] font-bold">2.83</span></div>
-                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#06d6a0] h-3 rounded-full" style="width: 56.6%"></div></div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5"><div class="bg-[#06d6a0] h-2.5 rounded-full" style="width: 56.6%"></div></div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Game Controls (Handling)</span><span class="text-red-400 font-bold">2.70</span></div>
-                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-red-400 h-3 rounded-full" style="width: 54%"></div></div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Game Controls (Handling)</span><span class="text-red-400 font-bold">2.83</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5"><div class="bg-red-400 h-2.5 rounded-full" style="width: 56.6%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Control Feeling</span><span class="text-red-400 font-bold">2.70</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5"><div class="bg-red-400 h-2.5 rounded-full" style="width: 54%"></div></div>
                     </div>
                     <div>
                         <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Instructions / Tutorial</span><span class="text-red-500 font-bold">2.35</span></div>
-                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-red-500 h-3 rounded-full" style="width: 47%"></div></div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5"><div class="bg-red-500 h-2.5 rounded-full" style="width: 47%"></div></div>
                     </div>
                 </div>
-                <!-- 玩家画像 / Demographics -->
-                <div class="bg-[#1e1e24] rounded-lg p-6 border border-gray-600">
-                    <h3 id="survey-title-demo" class="text-lg font-bold text-white mb-4 text-[#fb8500]">Player Demographics</h3>
-                    <ul class="text-gray-300 space-y-3 text-sm">
-                        <li class="flex justify-between"><span>🎮 <b>Weekly Playtime:</b></span> <span>Majority play <b>10-20 hours</b></span></li>
-                        <li class="flex justify-between"><span>🏎️ <b>Racing Game Familiarity:</b></span> <span>Mixed (Slightly to Extremely)</span></li>
-                        <li class="flex justify-between"><span>🤢 <b>Camera Satisfaction:</b></span> <span class="text-red-400">Majority Dissatisfied</span></li>
-                        <li class="flex justify-between"><span>🎯 <b>Track Clarity (Gear Track):</b></span> <span class="text-red-400">Highly Confusing</span></li>
-                    </ul>
+                
+                <!-- 重点反馈摘要 / Key Feedback Summary -->
+                <div class="mt-6 bg-[#1e1e24] rounded-lg p-4 border border-gray-600 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">Camera Performance</span>
+                        <div class="text-[#ef4444] text-sm font-medium">Majority "Somewhat/Extremely Dissatisfied"</div>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">Item Impact & Satisfaction</span>
+                        <div class="text-[#ef4444] text-sm font-medium">Majority "Somewhat Dissatisfied"</div>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">AI Competitive Balance</span>
+                        <div class="text-[#22c55e] text-sm font-medium">Majority felt it was "Balanced"</div>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">Track Clarity (Gear Track)</span>
+                        <div class="text-[#ef4444] text-sm font-medium">Majority "Strongly/Somewhat Disagree"</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 美术与表现力评分 / Art & Visuals Metrics -->
+        <div class="bg-[#2b2b36] rounded-xl p-6 border border-gray-700 shadow-lg">
+            <h2 id="survey-title-art" class="text-xl font-bold text-white mb-4 border-b border-gray-600 pb-2 flex items-center gap-2">
+                🎨 Art & Visual Satisfaction (Mean out of 5.00)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <div>
+                    <div class="text-center text-sm mb-2"><span class="text-gray-300 font-bold">Character / Hamster</span></div>
+                    <div class="text-center text-2xl font-black text-[#22c55e] mb-2">3.70</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-[#22c55e] h-2 rounded-full" style="width: 74%"></div></div>
+                </div>
+                <div>
+                    <div class="text-center text-sm mb-2"><span class="text-gray-300 font-bold">Track Environments</span></div>
+                    <div class="text-center text-2xl font-black text-[#ffbe0b] mb-2">3.57</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-[#ffbe0b] h-2 rounded-full" style="width: 71.4%"></div></div>
+                </div>
+                <div>
+                    <div class="text-center text-sm mb-2"><span class="text-gray-300 font-bold">Vehicle Models</span></div>
+                    <div class="text-center text-2xl font-black text-[#3a86ff] mb-2">3.26</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-[#3a86ff] h-2 rounded-full" style="width: 65.2%"></div></div>
+                </div>
+                <div>
+                    <div class="text-center text-sm mb-2"><span class="text-gray-300 font-bold">User Interface (UI)</span></div>
+                    <div class="text-center text-2xl font-black text-red-400 mb-2">3.00</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-red-400 h-2 rounded-full" style="width: 60%"></div></div>
+                </div>
+                <div>
+                    <div class="text-center text-sm mb-2"><span class="text-gray-300 font-bold">Visual Effects (VFX)</span></div>
+                    <div class="text-center text-2xl font-black text-red-500 mb-2">2.78</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 55.6%"></div></div>
                 </div>
             </div>
         </div>
 
         <!-- 文本回复区 / Qualitative Text Responses -->
-        <h2 id="survey-title-text" class="text-2xl font-bold text-white mb-6">Qualitative Responses</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="flex flex-col gap-4">
-                <div class="bg-[#22c55e] text-white font-bold py-2 px-4 rounded-t-lg shadow text-center" id="col-good">🌟 What Went Well</div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"During the Roulette Track, going up the ramp with the plastic balls coming down was very fun... testing maneuvering ability."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"I really loved the jump pads. Being able to use them to hop from one track to another and skip sections felt really rewarding."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"Running on the track that have a bunch of balls rolling... Feeling like playing in a pachinko machine :D"</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"The 'Rainbow Road' style track and the initial experience of entering tunnels were highlights."</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-4">
-                <div class="bg-[#ef4444] text-white font-bold py-2 px-4 rounded-t-lg shadow text-center" id="col-bad">❌ What Went Wrong</div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"The moving rainbow road. This made me very nauseous... The auto-launch portions of the tracks were nausea inducing."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"Controls broadly felt very slippery and imprecise... Sometimes I felt making turns consistently was needlessly difficult."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"In the Gear track, I felt very confused when I entered a gear during the more open section. It was very dark and there were no conveyance signs."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"The camera would jump in and out of canned sequences pretty abruptly... I didn't feel I had control of the camera motion."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"Engine sound is far too dominating and got annoying after awhile. Other gameplay critical sounds didn't feel impactful."</p>
+        <h2 id="survey-title-text" class="text-2xl font-bold text-white mb-2 mt-8">Qualitative Responses</h2>
+        <p class="text-gray-400 text-sm mb-6">Scroll within the columns to read all unfiltered player feedback from the survey.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-[600px]">
+            
+            <!-- What went well -->
+            <div class="flex flex-col bg-[#2b2b36] rounded-xl border border-gray-700 shadow-lg overflow-hidden">
+                <div class="bg-[#22c55e] text-white font-bold py-3 px-4 shadow text-center z-10" id="col-good">🌟 What Went Well</div>
+                <div class="p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar flex-1">
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Finding the funnel and being able to go on top of the dome."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Dodging the balls on the uphill slope was a fun element to the game."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"I enjoyed the Drifting mechanic, once I started to use it correctly."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Successfully getting one of the shortcuts was very satisfying."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"I also enjoyed wedging myself between a gear and the floor, though I doubt that's something you want players to be doing."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"The third track tunnel that cover all that can let the player rotate on the top is funny."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"The tube shortcuts feels quite good."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"the jetpackage item is too OP."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Falling off the track repeatedly even when I felt my horrible racing game skills I should have been able to recover."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"During the Roulette Track, going up the ramp with the plastic balls coming down was very fun... testing maneuvering ability."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Running on the track that have a bunch of balls rolling... Feeling like playing in a pachinko machine :D"</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"I really loved the jump pads. Being able to use them to hop from one track to another and skip sections felt really rewarding."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"The 'Rainbow Road' style track and the initial experience of entering tunnels were highlights."</p></div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-4">
-                <div class="bg-[#3a86ff] text-white font-bold py-2 px-4 rounded-t-lg shadow text-center" id="col-idea">💡 Even Better If...</div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"Tightening the controls on both the camera and the kart to make both feel slightly less slippery would help improve game feel a lot."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"Make the player able to steer immediately when they respawn, instead of having to wait 3 seconds."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"The drift took away my momentum and made me not want to do it... Try to make the drift take shorter time to accelerate."</p>
-                </div>
-                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
-                    <p class="text-gray-300 text-sm italic">"I would really like a stronger visual difference between the tracks. Even if it was just a lighting difference. So I feel like I am in a brand new race."</p>
+            <!-- What went wrong -->
+            <div class="flex flex-col bg-[#2b2b36] rounded-xl border border-gray-700 shadow-lg overflow-hidden">
+                <div class="bg-[#ef4444] text-white font-bold py-3 px-4 shadow text-center z-10" id="col-bad">❌ What Went Wrong</div>
+                <div class="p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar flex-1">
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"when my game glitched and i was on lap 2 for the next 3 laps."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"The moving rainbow road. This made me very nauseous... The auto-launch portions of the tracks were nausea inducing."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"The camera movement entering the tunnels left me confused and disoriented. Switching out to the wide shot, made me feel as though I had hit upon a bug."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"I felt frustrated reaching the top section of a banking corn... I wished there were a half transparent tunneling on those sections to keep you on the track."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Controls broadly felt very slippery and imprecise... Sometimes I felt making turns consistently was needlessly difficult."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"On the first track's funnel obstacle, the fact that some parts had open holes and others didn't made me think it was some sort of challenge to get into the open hole, when I was actually supposed to just keep following the circle."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Engine sound is far too dominating and got annoying after awhile. Other gameplay critical sounds didn't feel impactful."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"When using the pipeline shortcut that trigger cutscene, the camera might have bug that trigger a shaking and I have no idea where this pipeline will take me go."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"In the Gear track, I felt very confused when I entered a gear during the more open section. It was very dark and there were no conveyance signs."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"The camera would jump in and out of canned sequences pretty abruptly... I didn't feel I had control of the camera motion."</p></div>
                 </div>
             </div>
+
+            <!-- Even better if -->
+            <div class="flex flex-col bg-[#2b2b36] rounded-xl border border-gray-700 shadow-lg overflow-hidden">
+                <div class="bg-[#3a86ff] text-white font-bold py-3 px-4 shadow text-center z-10" id="col-idea">💡 Even Better If...</div>
+                <div class="p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar flex-1">
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"less glitches with the lap counting and the computers."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"The drift. The fact that it took away my momentum made me not want to do it."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Emphasize the drifting and acceleration mechanics. Identify player character with stronger saturated colors, and or some kind of visual effect."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"More audio conveyance. Items, launchers, and lap completion in particular."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"I will let the jump item to be a common skill. And give a short boost after jump."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Try to make the control better and make the drift take shorter time to accelerate."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"I would separate the drift and boost mechanics."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Tightening the controls on both the camera and the kart to make both feel slightly less slippery would help improve game feel a lot."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Make the player able to steer immediately when they respawn, instead of having to wait 3 seconds."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"Give the track edge more friction."</p></div>
+                    <div class="bg-[#1e1e24] p-4 rounded-lg border border-gray-700"><p class="text-gray-300 text-sm italic">"I would really like a stronger visual difference between the tracks. Even if it was just a lighting difference. So I feel like I am in a brand new race."</p></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -388,8 +480,9 @@
                 statusInprogress: 'In Progress',
                 statusReview: 'Review',
                 statusDone: 'Done',
-                survMetrics: 'Quantitative Metrics (Mean out of 5.00)',
-                survDemo: 'Player Demographics',
+                survMetrics: '🎮 Core Experience (Mean out of 5.00)',
+                survArt: '🎨 Art & Visual Satisfaction (Mean out of 5.00)',
+                survDemo: '👥 Player Demographics',
                 survText: 'Qualitative Responses',
                 colGood: '🌟 What Went Well',
                 colBad: '❌ What Went Wrong',
@@ -425,8 +518,9 @@
                 statusInprogress: '开发中',
                 statusReview: '审核中',
                 statusDone: '已完成',
-                survMetrics: '定量数据评分 (满分 5.00)',
-                survDemo: '玩家群体画像',
+                survMetrics: '🎮 核心体验评分 (满分 5.00)',
+                survArt: '🎨 美术与表现力评分 (满分 5.00)',
+                survDemo: '👥 玩家群体画像',
                 survText: '定性文本反馈',
                 colGood: '🌟 表现优异的部分',
                 colBad: '❌ 体验糟糕的部分',
@@ -588,6 +682,7 @@
             document.getElementById('modal-status-done').innerText = i18n[currentLang].statusDone;
 
             document.getElementById('survey-title-metrics').innerText = i18n[currentLang].survMetrics;
+            document.getElementById('survey-title-art').innerText = i18n[currentLang].survArt;
             document.getElementById('survey-title-demo').innerText = i18n[currentLang].survDemo;
             document.getElementById('survey-title-text').innerText = i18n[currentLang].survText;
             document.getElementById('col-good').innerText = i18n[currentLang].colGood;
