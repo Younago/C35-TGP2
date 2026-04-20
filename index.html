@@ -21,6 +21,7 @@
             --accent-tech: #06d6a0;
             --accent-items: #118ab2;
             --accent-ui: #ef476f;
+            --accent-team: #10b981;
         }
 
         body {
@@ -54,6 +55,7 @@
         .tag.tech { background-color: var(--accent-tech); color: black; }
         .tag.items { background-color: var(--accent-items); color: white; }
         .tag.ui { background-color: var(--accent-ui); color: white; }
+        .tag.team-role { background-color: var(--accent-team); color: white; }
         
         .tag.action-item { background-color: #ef4444; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .tag.survey-good { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
@@ -122,12 +124,15 @@
     </header>
 
     <!-- 全局视图切换 / Global View Tabs -->
-    <div class="max-w-7xl mx-auto flex justify-center gap-4 mb-8">
+    <div class="max-w-7xl mx-auto flex justify-center flex-wrap gap-4 mb-8">
         <button id="tab-backlog" class="tab-btn active rounded-xl px-8 py-3 font-bold text-lg shadow-md" onclick="switchView('backlog')">
             📋 Feedback Backlog
         </button>
         <button id="tab-survey" class="tab-btn rounded-xl px-8 py-3 font-bold text-lg shadow-md" onclick="switchView('survey')">
-            📊 Survey Report (23 Responses)
+            📊 Survey Report
+        </button>
+        <button id="tab-team" class="tab-btn rounded-xl px-8 py-3 font-bold text-lg shadow-md" onclick="switchView('team')">
+            💬 Team Suggestions
         </button>
     </div>
 
@@ -344,6 +349,55 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- 视图 3：团队内部建议面板 / VIEW 3: TEAM VIEW -->
+    <!-- ========================================== -->
+    <div id="view-team" class="hidden-view max-w-7xl mx-auto space-y-8">
+        
+        <!-- 提交团队反馈的表单 / Team Feedback Form -->
+        <div class="bg-[#2b2b36] rounded-xl p-6 border border-gray-700 shadow-lg">
+            <h2 id="team-form-title" class="text-xl font-bold text-white mb-4 border-b border-gray-600 pb-2 flex items-center gap-2">
+                📢 Submit Team Suggestion
+            </h2>
+            <form id="teamFeedbackForm" onsubmit="submitTeamSuggestion(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label id="team-label-name" class="block text-sm font-medium text-gray-300 mb-1">Your Name / Alias</label>
+                        <input type="text" id="team-name" required placeholder="e.g. Gary" class="w-full bg-[#1e1e24] border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#10b981]">
+                    </div>
+                    <div>
+                        <label id="team-label-role" class="block text-sm font-medium text-gray-300 mb-1">Your Role / Department</label>
+                        <select id="team-role" class="w-full bg-[#1e1e24] border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#10b981]">
+                            <option value="Game Design">Game Design</option>
+                            <option value="Level Design">Level Design</option>
+                            <option value="Programming">Programming (Tech)</option>
+                            <option value="Art / Animation">Art / Animation</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Production / QA">Production / QA</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label id="team-label-desc" class="block text-sm font-medium text-gray-300 mb-1">Suggestion or Thought</label>
+                    <textarea id="team-desc" required rows="3" placeholder="What's on your mind?" class="w-full bg-[#1e1e24] border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#10b981] resize-none"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" id="btn-submit-team" class="px-6 py-2 bg-[#10b981] hover:bg-emerald-600 text-white rounded-lg font-bold shadow transition-colors flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Post Suggestion
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 团队反馈瀑布流 / Team Feedback Grid -->
+        <div id="team-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- JS 动态渲染团队成员的建议 / Populated by JS -->
+        </div>
+
+    </div>
 
     <!-- ========================================== -->
     <!-- 添加/编辑反馈的弹窗表单 (仅在 Backlog 下可用) -->
@@ -446,14 +500,17 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const db = getDatabase(app);
-        const feedbacksRef = ref(db, 'feedbacks'); // 数据根节点
+        
+        const feedbacksRef = ref(db, 'feedbacks'); // Backlog 数据根节点
+        const teamRef = ref(db, 'team_suggestions'); // Team Suggestions 数据根节点
 
         // 国际化词典 / i18n Dictionary
         const i18n = {
             'en': {
                 mainTitle: 'C35 TGP2 Alpha Playtest Feedback Dashboard',
                 tabBacklog: '📋 Feedback Backlog',
-                tabSurvey: '📊 Survey Report (23 Responses)',
+                tabSurvey: '📊 Survey Report',
+                tabTeam: '💬 Team Suggestions',
                 addFb: 'Add Feedback',
                 fltAll: 'All Feedback',
                 fltCamera: 'Camera',
@@ -486,12 +543,18 @@
                 survText: 'Qualitative Responses',
                 colGood: '🌟 What Went Well',
                 colBad: '❌ What Went Wrong',
-                colIdea: '💡 Even Better If...'
+                colIdea: '💡 Even Better If...',
+                teamFormTitle: '📢 Submit Team Suggestion',
+                teamNameHolder: 'Your Name / Alias',
+                teamRoleHolder: 'Your Role / Department',
+                teamDescHolder: 'Suggestion or Thought',
+                btnSubmitTeam: 'Post Suggestion'
             },
             'zh': {
                 mainTitle: 'C35 TGP2 Alpha 游戏测试反馈看板',
                 tabBacklog: '📋 待办问题积压 (Backlog)',
-                tabSurvey: '📊 问卷数据报告 (23份回收)',
+                tabSurvey: '📊 问卷数据报告',
+                tabTeam: '💬 团队内部建议',
                 addFb: '添加反馈',
                 fltAll: '全部反馈',
                 fltCamera: '相机',
@@ -524,7 +587,12 @@
                 survText: '定性文本反馈',
                 colGood: '🌟 表现优异的部分',
                 colBad: '❌ 体验糟糕的部分',
-                colIdea: '💡 改进建议'
+                colIdea: '💡 改进建议',
+                teamFormTitle: '📢 提交团队建议',
+                teamNameHolder: '你的姓名 / 昵称',
+                teamRoleHolder: '你的职位 / 部门',
+                teamDescHolder: '建议或想法',
+                btnSubmitTeam: '发布建议'
             }
         };
         let currentLang = 'en';
@@ -533,23 +601,20 @@
         // 视图切换逻辑 / View Switching Logic
         // ==========================================
         function switchView(viewName) {
-            const viewBacklog = document.getElementById('view-backlog');
-            const viewSurvey = document.getElementById('view-survey');
-            const tabBacklog = document.getElementById('tab-backlog');
-            const tabSurvey = document.getElementById('tab-survey');
+            const views = ['backlog', 'survey', 'team'];
             const btnAdd = document.getElementById('btn-add-feedback');
 
+            views.forEach(v => {
+                document.getElementById('view-' + v).classList.add('hidden-view');
+                document.getElementById('tab-' + v).classList.remove('active');
+            });
+            
+            document.getElementById('view-' + viewName).classList.remove('hidden-view');
+            document.getElementById('tab-' + viewName).classList.add('active');
+
             if (viewName === 'backlog') {
-                viewBacklog.classList.remove('hidden-view');
-                viewSurvey.classList.add('hidden-view');
-                tabBacklog.classList.add('active');
-                tabSurvey.classList.remove('active');
                 btnAdd.classList.remove('hidden-view'); 
-            } else if (viewName === 'survey') {
-                viewBacklog.classList.add('hidden-view');
-                viewSurvey.classList.remove('hidden-view');
-                tabBacklog.classList.remove('active');
-                tabSurvey.classList.add('active');
+            } else {
                 btnAdd.classList.add('hidden-view'); 
             }
         }
@@ -591,12 +656,15 @@
         ];
 
         let allFeedbacks = [];
+        let allTeamSuggestions = [];
         let currentFilter = 'all';
         let itemToDelete = null;
 
         // ==========================================
         // 实时数据监听与同步 / Firebase Real-time Sync
         // ==========================================
+        
+        // 1. Backlog Feedbacks Listener
         onValue(feedbacksRef, (snapshot) => {
             const data = snapshot.val();
             let needsUpdate = false;
@@ -630,9 +698,24 @@
             renderGrid();
         });
 
+        // 2. Team Suggestions Listener
+        onValue(teamRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // Convert object/array from Firebase to array format
+                allTeamSuggestions = Array.isArray(data) ? data : Object.values(data);
+            } else {
+                allTeamSuggestions = [];
+            }
+            renderTeamGrid();
+        });
+
         function saveToFirebase() {
-            // 将数据实时写入 Firebase / Write data directly to Firebase
             set(feedbacksRef, allFeedbacks);
+        }
+
+        function saveTeamToFirebase() {
+            set(teamRef, allTeamSuggestions);
         }
 
         window.onload = () => {
@@ -649,12 +732,14 @@
             currentLang = currentLang === 'en' ? 'zh' : 'en';
             updateStaticTexts();
             renderGrid();
+            renderTeamGrid();
         }
 
         function updateStaticTexts() {
             document.getElementById('main-title').innerText = i18n[currentLang].mainTitle;
             document.getElementById('tab-backlog').innerText = i18n[currentLang].tabBacklog;
             document.getElementById('tab-survey').innerText = i18n[currentLang].tabSurvey;
+            document.getElementById('tab-team').innerText = i18n[currentLang].tabTeam;
             document.getElementById('add-fb-text').innerText = i18n[currentLang].addFb;
             document.getElementById('flt-all').innerText = i18n[currentLang].fltAll;
             document.getElementById('flt-camera').innerText = i18n[currentLang].fltCamera;
@@ -689,6 +774,18 @@
             document.getElementById('col-bad').innerText = i18n[currentLang].colBad;
             document.getElementById('col-idea').innerText = i18n[currentLang].colIdea;
 
+            // Team Sub-page Translations
+            document.getElementById('team-form-title').innerHTML = `📢 ${i18n[currentLang].teamFormTitle}`;
+            document.getElementById('team-label-name').innerText = i18n[currentLang].teamNameHolder;
+            document.getElementById('team-label-role').innerText = i18n[currentLang].teamRoleHolder;
+            document.getElementById('team-label-desc').innerText = i18n[currentLang].teamDescHolder;
+            document.getElementById('btn-submit-team').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+                </svg>
+                ${i18n[currentLang].btnSubmitTeam}
+            `;
+
             document.querySelector('.i18n-cat-camera').innerText = i18n[currentLang].fltCamera;
             document.querySelector('.i18n-cat-controls').innerText = i18n[currentLang].fltControls;
             document.querySelector('.i18n-cat-ld').innerText = i18n[currentLang].fltLd;
@@ -699,6 +796,9 @@
             document.querySelector('.i18n-cat-ui').innerText = i18n[currentLang].fltUi;
         }
 
+        // ==========================================
+        // Backlog 逻辑 / Backlog Logic
+        // ==========================================
         function toggleActionable(id) {
             const index = allFeedbacks.findIndex(fb => fb.id === id);
             if (index !== -1) {
@@ -808,7 +908,77 @@
         }
 
         // ==========================================
-        // 模态框逻辑 / Modal Handling
+        // 团队内部建议逻辑 / Team Suggestions Logic
+        // ==========================================
+        function submitTeamSuggestion(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('team-name').value;
+            const role = document.getElementById('team-role').value;
+            const desc = document.getElementById('team-desc').value;
+
+            const newSuggestion = {
+                id: 'team_' + Date.now(),
+                name: name,
+                role: role,
+                desc: desc,
+                timestamp: Date.now()
+            };
+
+            // 添加到队首最新的 / Add to the top
+            allTeamSuggestions.unshift(newSuggestion);
+            saveTeamToFirebase();
+            
+            // 清空表单 / Clear form
+            document.getElementById('teamFeedbackForm').reset();
+        }
+
+        function renderTeamGrid() {
+            const grid = document.getElementById('team-grid');
+            grid.innerHTML = '';
+
+            if(allTeamSuggestions.length === 0) {
+                grid.innerHTML = `<p class="text-gray-500 italic col-span-full">No team suggestions yet. Be the first to share your thoughts!</p>`;
+                return;
+            }
+
+            // 按时间最新排序 / Sort by newest
+            const sorted = [...allTeamSuggestions].sort((a, b) => b.timestamp - a.timestamp);
+
+            sorted.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `card rounded-xl p-5 flex flex-col gap-3 border border-[#10b981] shadow-[0_0_8px_rgba(16,185,129,0.15)] relative group`;
+
+                const dateStr = new Date(item.timestamp).toLocaleDateString();
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="tag team-role">${item.role}</span>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                            <button onclick="deleteTeamSuggestion('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer" title="Delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 text-base leading-relaxed mt-1">"${item.desc}"</p>
+                    <div class="mt-auto pt-4 border-t border-gray-700 flex justify-between items-center text-xs text-gray-500">
+                        <span class="font-bold text-gray-400">👤 ${item.name}</span>
+                        <span>📅 ${dateStr}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function deleteTeamSuggestion(id) {
+            if(confirm(currentLang === 'en' ? "Delete this team suggestion?" : "确定要删除这条团队建议吗？")) {
+                allTeamSuggestions = allTeamSuggestions.filter(item => item.id !== id);
+                saveTeamToFirebase();
+            }
+        }
+
+        // ==========================================
+        // 模态框逻辑 (Backlog 用) / Modal Handling
         // ==========================================
         function openModal(id = null) {
             const modal = document.getElementById('addModal');
@@ -945,6 +1115,8 @@
         window.closeDeleteModal = closeDeleteModal;
         window.confirmDelete = confirmDelete;
         window.submitFeedback = submitFeedback;
+        window.submitTeamSuggestion = submitTeamSuggestion;
+        window.deleteTeamSuggestion = deleteTeamSuggestion;
 
     </script>
 </body>
