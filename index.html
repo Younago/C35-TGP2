@@ -7,6 +7,96 @@
     <!-- 使用 Tailwind CSS 加速样式开发 / Using Tailwind CSS for rapid UI development -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            /* 颜色变量定义 / Color Variable Definitions */
+            --bg-color: #1e1e24;
+            --text-color: #e0e0e0;
+            --card-bg: #2b2b36;
+            --primary: #fb8500;
+            --accent-camera: #ff006e;
+            --accent-controls: #3a86ff;
+            --accent-ld: #8338ec;
+            --accent-art: #ffbe0b;
+            --accent-audio: #f94144;
+            --accent-tech: #06d6a0;
+            --accent-items: #118ab2;
+            --accent-ui: #ef476f;
+            --accent-team: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        .card.is-done {
+            opacity: 0.55;
+        }
+
+        /* 标签颜色定义 / Tag Colors */
+        .tag { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-block; margin-right: 0.5rem; margin-bottom: 0.5rem;}
+        .tag.camera { background-color: var(--accent-camera); color: white; }
+        .tag.controls { background-color: var(--accent-controls); color: white; }
+        .tag.ld { background-color: var(--accent-ld); color: white; }
+        .tag.art { background-color: var(--accent-art); color: black; }
+        .tag.audio { background-color: var(--accent-audio); color: white; }
+        .tag.tech { background-color: var(--accent-tech); color: black; }
+        .tag.items { background-color: var(--accent-items); color: white; }
+        .tag.ui { background-color: var(--accent-ui); color: white; }
+        .tag.team-role { background-color: var(--accent-team); color: white; }
+        
+        .tag.action-item { background-color: #ef4444; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .tag.survey-good { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
+        .tag.survey-bad { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .tag.survey-neutral { background-color: rgba(156, 163, 175, 0.2); color: #d1d5db; border: 1px solid #9ca3af; }
+
+        /* 开发状态选择器 / Status Dropdown styling */
+        .status-select {
+            font-weight: 700; text-transform: uppercase; font-size: 0.75rem; 
+            padding: 0.15rem 1.5rem 0.15rem 0.6rem; border-radius: 9999px; 
+            cursor: pointer; appearance: none; border: 1px solid transparent;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.4rem center;
+            background-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .status-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.2); }
+        .status-todo { background-color: #4b5563; color: white; }
+        .status-inprogress { background-color: #3a86ff; color: white; }
+        .status-review { background-color: #8338ec; color: white; }
+        .status-done { background-color: #22c55e; color: white; }
+
+        /* 过滤器与视图切换按钮状态 / Filter & Tab Button Active State */
+        .filter-btn, .tab-btn {
+            background-color: var(--card-bg);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover, .tab-btn:hover { border-color: var(--primary); }
+        .filter-btn.active, .tab-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); }
+        
+        /* 隐藏类 / Utility */
+        .hidden-view { display: none !important; }
+
+        /* 自定义滚动条用于文本回复区 / Custom Scrollbar for Text Areas */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
@@ -15,7 +105,7 @@
     <!-- 顶部导航与标题 / Header Area -->
     <header class="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-700 pb-6">
         <div>
-            <h1 id="main-title" class="text-3xl font-bold text-[#fb8500] mb-2">C35 TGP2 Beta Dashboard</h1>
+            <h1 id="main-title" class="text-3xl font-bold text-[#fb8500] mb-2">C35 TGP2 Alpha Playtest Feedback Dashboard</h1>
         </div>
         <!-- 按钮组 / Button Group -->
         <div class="flex items-center gap-3">
@@ -278,10 +368,12 @@
                     <div>
                         <label id="team-label-role" class="block text-sm font-medium text-gray-300 mb-1">Your Role / Department</label>
                         <select id="team-role" class="w-full bg-[#1e1e24] border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#10b981]">
-                            <option value="LD">LD</option>
-                            <option value="SD">SD</option>
-                            <option value="AC">AC</option>
-                            <option value="PD">PD</option>
+                            <option value="Game Design">Game Design</option>
+                            <option value="Level Design">Level Design</option>
+                            <option value="Programming">Programming (Tech)</option>
+                            <option value="Art / Animation">Art / Animation</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Production / QA">Production / QA</option>
                         </select>
                     </div>
                 </div>
@@ -415,7 +507,7 @@
         // 国际化词典 / i18n Dictionary
         const i18n = {
             'en': {
-                mainTitle: 'C35 TGP2 Beta Dashboard',
+                mainTitle: 'C35 TGP2 Alpha Playtest Feedback Dashboard',
                 tabBacklog: '📋 Feedback Backlog',
                 tabSurvey: '📊 Survey Report',
                 tabTeam: '💬 Team Suggestions',
@@ -459,7 +551,7 @@
                 btnSubmitTeam: 'Post Suggestion'
             },
             'zh': {
-                mainTitle: 'C35 TGP2 Beta 看板',
+                mainTitle: 'C35 TGP2 Alpha 游戏测试反馈看板',
                 tabBacklog: '📋 待办问题积压 (Backlog)',
                 tabSurvey: '📊 问卷数据报告',
                 tabTeam: '💬 团队内部建议',
