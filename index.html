@@ -4,215 +4,342 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C35 TGP2 Alpha Playtest Feedback Dashboard</title>
+    <!-- 使用 Tailwind CSS 加速样式开发 / Using Tailwind CSS for rapid UI development -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --bg-color: #1e1e24; --text-color: #e0e0e0; --card-bg: #2b2b36; --primary: #fb8500;
-            --accent-camera: #ff006e; --accent-controls: #3a86ff; --accent-ld: #8338ec;
-            --accent-art: #ffbe0b; --accent-audio: #f94144; --accent-tech: #06d6a0;
-            --accent-items: #118ab2; --accent-ui: #ef476f;
+            /* 颜色变量定义 / Color Variable Definitions */
+            --bg-color: #1e1e24;
+            --text-color: #e0e0e0;
+            --card-bg: #2b2b36;
+            --primary: #fb8500;
+            --accent-camera: #ff006e;
+            --accent-controls: #3a86ff;
+            --accent-ld: #8338ec;
+            --accent-art: #ffbe0b;
+            --accent-audio: #f94144;
+            --accent-tech: #06d6a0;
+            --accent-items: #118ab2;
+            --accent-ui: #ef476f;
         }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
-        .card { background-color: var(--card-bg); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease, opacity 0.3s ease; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
-        .card.is-done { opacity: 0.55; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        .card.is-done {
+            opacity: 0.55;
+        }
+
+        /* 标签颜色定义 / Tag Colors */
         .tag { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-block; margin-right: 0.5rem; margin-bottom: 0.5rem;}
-        .tag.camera { background-color: var(--accent-camera); color: white; } .tag.controls { background-color: var(--accent-controls); color: white; }
-        .tag.ld { background-color: var(--accent-ld); color: white; } .tag.art { background-color: var(--accent-art); color: black; }
-        .tag.audio { background-color: var(--accent-audio); color: white; } .tag.tech { background-color: var(--accent-tech); color: black; }
-        .tag.items { background-color: var(--accent-items); color: white; } .tag.ui { background-color: var(--accent-ui); color: white; }
-        .tag.action-item { background-color: #ef4444; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .status-select { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 0.15rem 1.5rem 0.15rem 0.6rem; border-radius: 9999px; cursor: pointer; appearance: none; border: 1px solid transparent; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>'); background-repeat: no-repeat; background-position: right 0.4rem center; background-size: 0.8rem; transition: all 0.2s; }
-        .status-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.2); }
-        .status-todo { background-color: #4b5563; color: white; } .status-inprogress { background-color: #3a86ff; color: white; }
-        .status-review { background-color: #8338ec; color: white; } .status-done { background-color: #22c55e; color: white; }
-        .filter-btn, .tab-btn { background-color: var(--card-bg); border: 2px solid transparent; transition: all 0.3s ease; }
-        .filter-btn.active, .tab-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
-        .modal-backdrop { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); }
-        .hidden-view { display: none !important; }
-        .survey-quote-card { background-color: #1e1e24; border-left: 4px solid transparent; padding: 12px; margin-bottom: 12px; border-radius: 4px 8px 8px 4px; }
-        .quote-good { border-left-color: #22c55e; } .quote-bad { border-left-color: #ef4444; } .quote-idea { border-left-color: #3a86ff; }
+        .tag.camera { background-color: var(--accent-camera); color: white; }
+        .tag.controls { background-color: var(--accent-controls); color: white; }
+        .tag.ld { background-color: var(--accent-ld); color: white; }
+        .tag.art { background-color: var(--accent-art); color: black; }
+        .tag.audio { background-color: var(--accent-audio); color: white; }
+        .tag.tech { background-color: var(--accent-tech); color: black; }
+        .tag.items { background-color: var(--accent-items); color: white; }
+        .tag.ui { background-color: var(--accent-ui); color: white; }
         
-        /* Sync Indicator */
-        #sync-indicator { transition: opacity 0.3s ease; }
-        .syncing { opacity: 1; } .synced { opacity: 0; pointer-events: none; }
+        .tag.action-item { background-color: #ef4444; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .tag.survey-good { background-color: #22c55e; color: white; }
+        .tag.survey-bad { background-color: #ef4444; color: white; }
+        .tag.survey-idea { background-color: #3a86ff; color: white; }
+
+        /* 开发状态选择器 / Status Dropdown styling */
+        .status-select {
+            font-weight: 700; text-transform: uppercase; font-size: 0.75rem; 
+            padding: 0.15rem 1.5rem 0.15rem 0.6rem; border-radius: 9999px; 
+            cursor: pointer; appearance: none; border: 1px solid transparent;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.4rem center;
+            background-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .status-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.2); }
+        .status-todo { background-color: #4b5563; color: white; }
+        .status-inprogress { background-color: #3a86ff; color: white; }
+        .status-review { background-color: #8338ec; color: white; }
+        .status-done { background-color: #22c55e; color: white; }
+
+        /* 过滤器与视图切换按钮状态 / Filter & Tab Button Active State */
+        .filter-btn, .tab-btn {
+            background-color: var(--card-bg);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover, .tab-btn:hover { border-color: var(--primary); }
+        .filter-btn.active, .tab-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); }
+        
+        /* 隐藏类 / Utility */
+        .hidden-view { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen p-6 relative">
+<body class="min-h-screen p-6">
 
-    <div id="sync-indicator" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-[#3a86ff] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg z-50 synced flex items-center gap-2">
-        <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        Connecting...
-    </div>
-
+    <!-- 顶部导航与标题 / Header Area -->
     <header class="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-700 pb-6">
         <div>
             <h1 id="main-title" class="text-3xl font-bold text-[#fb8500] mb-2">C35 TGP2 Alpha Playtest Feedback Dashboard</h1>
-            <p id="cloud-status" class="text-xs text-gray-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-gray-500 inline-block"></span> Initializing...</p>
         </div>
+        <!-- 按钮组 / Button Group -->
         <div class="flex items-center gap-3">
-            <button onclick="toggleLanguage()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 transition-transform hover:scale-105">
-                <span id="lang-text">EN / 中文</span>
+            <!-- 语言切换按钮 / Language Toggle -->
+            <button onclick="toggleLanguage()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center gap-2">
+                <span id="lang-text">🌐 EN / 中文</span>
             </button>
-            <button id="btn-add-feedback" onclick="openModal()" class="bg-[#fb8500] hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full shadow-lg flex items-center gap-2 transition-transform hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+            <!-- 添加反馈按钮 / Add Feedback Button -->
+            <button id="btn-add-feedback" onclick="openModal()" class="bg-[#fb8500] hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
                 <span id="add-fb-text">Add Feedback</span>
             </button>
         </div>
     </header>
 
+    <!-- 全局视图切换 / Global View Tabs -->
     <div class="max-w-7xl mx-auto flex justify-center gap-4 mb-8">
-        <button id="tab-backlog" class="tab-btn active rounded-xl px-8 py-3 font-bold text-lg shadow-md" onclick="switchView('backlog')">Feedback Backlog</button>
-        <button id="tab-survey" class="tab-btn rounded-xl px-8 py-3 font-bold text-lg shadow-md" onclick="switchView('survey')">Survey Report (23 Responses)</button>
+        <button id="tab-backlog" class="tab-btn active rounded-xl px-8 py-3 font-bold text-lg shadow-md" onclick="switchView('backlog')">
+            📋 Feedback Backlog
+        </button>
+        <button id="tab-survey" class="tab-btn rounded-xl px-8 py-3 font-bold text-lg shadow-md" onclick="switchView('survey')">
+            📊 Survey Report (23 Responses)
+        </button>
     </div>
 
-    <!-- VIEW 1: BACKLOG -->
+    <!-- ========================================== -->
+    <!-- 视图 1：任务积压看板 / VIEW 1: BACKLOG VIEW -->
+    <!-- ========================================== -->
     <div id="view-backlog" class="block">
+        <!-- 过滤器 / Filter Controls -->
         <div class="max-w-7xl mx-auto flex flex-wrap gap-3 mb-8" id="filter-container">
-            <button id="flt-all" class="filter-btn active rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('all')">All</button>
+            <button id="flt-all" class="filter-btn active rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('all')">All Feedback</button>
             <button id="flt-camera" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('camera')">Camera</button>
-            <button id="flt-controls" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('controls')">Controls</button>
+            <button id="flt-controls" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('controls')">Controls & Physics</button>
             <button id="flt-ld" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('ld')">Level Design</button>
             <button id="flt-art" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('art')">Art</button>
             <button id="flt-audio" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('audio')">Audio</button>
-            <button id="flt-tech" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('tech')">Tech</button>
+            <button id="flt-tech" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('tech')">Tech & Bugs</button>
             <button id="flt-items" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('items')">Items</button>
             <button id="flt-ui" class="filter-btn rounded-full px-5 py-2 font-semibold text-sm" onclick="filterSelection('ui')">UI</button>
         </div>
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="feedback-grid"></div>
+
+        <!-- 反馈卡片网格 / Feedback Grid -->
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="feedback-grid">
+            <!-- JS将动态渲染卡片于此 / Cards will be rendered here -->
+        </div>
     </div>
 
-    <!-- VIEW 2: SURVEY -->
+    <!-- ========================================== -->
+    <!-- 视图 2：问卷报告面板 / VIEW 2: SURVEY VIEW  -->
+    <!-- ========================================== -->
     <div id="view-survey" class="hidden-view max-w-7xl mx-auto">
+        <!-- (数据矩阵区 - 内容保持不变) -->
         <div class="bg-[#2b2b36] rounded-xl p-8 mb-8 border border-gray-700 shadow-lg">
-            <h2 id="survey-title-metrics" class="text-2xl font-bold text-white mb-6 border-b border-gray-600 pb-2">Quantitative Metrics</h2>
+            <h2 id="survey-title-metrics" class="text-2xl font-bold text-white mb-6 border-b border-gray-600 pb-2">Quantitative Metrics (Mean out of 5.00)</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 评分条 / Rating Bars -->
                 <div class="flex flex-col gap-4">
-                    <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Overall Fun</span><span class="text-[#fb8500] font-bold">3.78</span></div><div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-[#fb8500] h-2 rounded-full" style="width: 75.6%"></div></div></div>
-                    <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Art and Visuals</span><span class="text-[#ffbe0b] font-bold">3.65</span></div><div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-[#ffbe0b] h-2 rounded-full" style="width: 73%"></div></div></div>
-                    <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Level of Difficulty</span><span class="text-[#3a86ff] font-bold">3.22</span></div><div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-[#3a86ff] h-2 rounded-full" style="width: 64.4%"></div></div></div>
-                    <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Stability</span><span class="text-[#06d6a0] font-bold">2.83</span></div><div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-[#06d6a0] h-2 rounded-full" style="width: 56.6%"></div></div></div>
-                    <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Game Controls</span><span class="text-red-400 font-bold">2.70</span></div><div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-red-400 h-2 rounded-full" style="width: 54%"></div></div></div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Overall Fun</span><span class="text-[#fb8500] font-bold">3.78</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#fb8500] h-3 rounded-full" style="width: 75.6%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Art and Visuals</span><span class="text-[#ffbe0b] font-bold">3.65</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#ffbe0b] h-3 rounded-full" style="width: 73%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Level of Difficulty</span><span class="text-[#3a86ff] font-bold">3.22</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#3a86ff] h-3 rounded-full" style="width: 64.4%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Stability</span><span class="text-[#06d6a0] font-bold">2.83</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-[#06d6a0] h-3 rounded-full" style="width: 56.6%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Game Controls (Handling)</span><span class="text-red-400 font-bold">2.70</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-red-400 h-3 rounded-full" style="width: 54%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-300 font-bold">Instructions / Tutorial</span><span class="text-red-500 font-bold">2.35</span></div>
+                        <div class="w-full bg-gray-700 rounded-full h-3"><div class="bg-red-500 h-3 rounded-full" style="width: 47%"></div></div>
+                    </div>
                 </div>
-                <div class="bg-[#1e1e24] rounded-lg p-6 border border-gray-600 self-start">
-                    <h3 id="survey-title-demo" class="text-lg font-bold text-[#fb8500] mb-4">Player Insights</h3>
-                    <ul class="text-gray-300 space-y-2 text-sm">
-                        <li class="i18n-demo-playtime">Weekly Playtime: Majority 10-20 hrs/week</li>
-                        <li class="text-red-400 font-bold i18n-demo-cam">Camera Satisfaction: Majority Dissatisfied</li>
-                        <li class="text-red-400 i18n-demo-clarity">Track Clarity: Confusion in Gear Track</li>
+                <!-- 玩家画像 / Demographics -->
+                <div class="bg-[#1e1e24] rounded-lg p-6 border border-gray-600">
+                    <h3 id="survey-title-demo" class="text-lg font-bold text-white mb-4 text-[#fb8500]">Player Demographics</h3>
+                    <ul class="text-gray-300 space-y-3 text-sm">
+                        <li class="flex justify-between"><span>🎮 <b>Weekly Playtime:</b></span> <span>Majority play <b>10-20 hours</b></span></li>
+                        <li class="flex justify-between"><span>🏎️ <b>Racing Game Familiarity:</b></span> <span>Mixed (Slightly to Extremely)</span></li>
+                        <li class="flex justify-between"><span>🤢 <b>Camera Satisfaction:</b></span> <span class="text-red-400">Majority Dissatisfied</span></li>
+                        <li class="flex justify-between"><span>🎯 <b>Track Clarity (Gear Track):</b></span> <span class="text-red-400">Highly Confusing</span></li>
                     </ul>
                 </div>
             </div>
         </div>
-        <h2 id="survey-title-text" class="text-2xl font-bold text-white mb-6 uppercase tracking-wider">Verbatim Tester Feedback</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#22c55e] text-white font-bold py-3 text-center" id="col-good">🌟 What Went Well</div><div class="p-4 flex flex-col" id="container-good"></div></div>
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#ef4444] text-white font-bold py-3 text-center" id="col-bad">❌ What Went Wrong</div><div class="p-4 flex flex-col" id="container-bad"></div></div>
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#3a86ff] text-white font-bold py-3 text-center" id="col-idea">💡 Even Better If...</div><div class="p-4 flex flex-col" id="container-idea"></div></div>
-        </div>
-    </div>
 
-    <!-- MODAL -->
-    <div id="addModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-[#2b2b36] rounded-xl shadow-2xl w-full max-w-md border border-gray-700 p-6 overflow-y-auto max-h-screen">
-            <h2 id="modal-title" class="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-3">Log Feedback</h2>
-            <form id="feedbackForm" onsubmit="submitFeedback(event)">
-                <input type="hidden" id="fb-id">
-                <div class="mb-4 bg-[#1e1e24] border border-gray-600 rounded-lg p-3">
-                    <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="fb-actionable" class="w-5 h-5 accent-[#fb8500]"><span id="modal-action-text" class="text-sm font-bold text-[#fb8500]">Mark as Action Item</span></label>
-                    <div id="status-container" class="mt-3 pt-3 border-t border-gray-700 hidden">
-                        <label id="modal-status-label" class="block text-xs font-medium text-gray-400 mb-2">Status</label>
-                        <select id="fb-status" class="w-full bg-[#2b2b36] border border-gray-600 rounded-lg p-2 text-white">
-                            <option value="todo">To Do</option><option value="inprogress">In Progress</option><option value="review">Review</option><option value="done">Done</option>
-                        </select>
-                    </div>
+        <!-- 文本回复区 / Qualitative Text Responses -->
+        <h2 id="survey-title-text" class="text-2xl font-bold text-white mb-6">Qualitative Responses</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="flex flex-col gap-4">
+                <div class="bg-[#22c55e] text-white font-bold py-2 px-4 rounded-t-lg shadow text-center" id="col-good">🌟 What Went Well</div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"During the Roulette Track, going up the ramp with the plastic balls coming down was very fun... testing maneuvering ability."</p>
                 </div>
-                <div class="mb-4"><label id="modal-cat-title" class="block text-sm text-gray-300 mb-2">Categories</label><div class="grid grid-cols-2 gap-2 bg-[#1e1e24] p-3 border border-gray-600 rounded-lg" id="fb-categories-container">
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="camera" data-label="Camera" class="category-checkbox"><span>Camera</span></label>
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="controls" data-label="Controls" class="category-checkbox"><span>Controls</span></label>
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="ld" data-label="Level Design" class="category-checkbox"><span>Level Design</span></label>
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="art" data-label="Art" class="category-checkbox"><span>Art</span></label>
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="audio" data-label="Audio" class="category-checkbox"><span>Audio</span></label>
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="tech" data-label="Tech" class="category-checkbox"><span>Tech</span></label>
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="items" data-label="Items" class="category-checkbox"><span>Items</span></label>
-                    <label class="flex items-center space-x-2 text-xs"><input type="checkbox" value="ui" data-label="UI" class="category-checkbox"><span>UI</span></label>
-                </div></div>
-                <div class="mb-4"><label id="modal-title-input" class="block text-sm text-gray-300 mb-2">Title</label><input type="text" id="fb-title" required class="w-full bg-[#1e1e24] p-2 border border-gray-600 rounded-lg text-white"></div>
-                <div class="mb-6"><label id="modal-desc-input" class="block text-sm text-gray-300 mb-2">Description</label><textarea id="fb-desc" required rows="3" class="w-full bg-[#1e1e24] p-2 border border-gray-600 rounded-lg text-white resize-none"></textarea></div>
-                <div class="flex justify-end gap-3"><button type="button" id="modal-btn-cancel" onclick="closeModal()" class="text-gray-400">Cancel</button><button type="submit" id="modal-btn-save" class="bg-[#fb8500] px-4 py-2 rounded font-bold text-white">Save</button></div>
-            </form>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"I really loved the jump pads. Being able to use them to hop from one track to another and skip sections felt really rewarding."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"Running on the track that have a bunch of balls rolling... Feeling like playing in a pachinko machine :D"</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"The 'Rainbow Road' style track and the initial experience of entering tunnels were highlights."</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <div class="bg-[#ef4444] text-white font-bold py-2 px-4 rounded-t-lg shadow text-center" id="col-bad">❌ What Went Wrong</div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"The moving rainbow road. This made me very nauseous... The auto-launch portions of the tracks were nausea inducing."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"Controls broadly felt very slippery and imprecise... Sometimes I felt making turns consistently was needlessly difficult."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"In the Gear track, I felt very confused when I entered a gear during the more open section. It was very dark and there were no conveyance signs."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"The camera would jump in and out of canned sequences pretty abruptly... I didn't feel I had control of the camera motion."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"Engine sound is far too dominating and got annoying after awhile. Other gameplay critical sounds didn't feel impactful."</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <div class="bg-[#3a86ff] text-white font-bold py-2 px-4 rounded-t-lg shadow text-center" id="col-idea">💡 Even Better If...</div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"Tightening the controls on both the camera and the kart to make both feel slightly less slippery would help improve game feel a lot."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"Make the player able to steer immediately when they respawn, instead of having to wait 3 seconds."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"The drift took away my momentum and made me not want to do it... Try to make the drift take shorter time to accelerate."</p>
+                </div>
+                <div class="bg-[#2b2b36] p-4 rounded-lg border border-gray-700 shadow-md">
+                    <p class="text-gray-300 text-sm italic">"I would really like a stronger visual difference between the tracks. Even if it was just a lighting difference. So I feel like I am in a brand new race."</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- DELETE CONFIRM -->
+
+    <!-- ========================================== -->
+    <!-- 添加/编辑反馈的弹窗表单 (仅在 Backlog 下可用) -->
+    <!-- ========================================== -->
+    <div id="addModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-[#2b2b36] rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-gray-700">
+            <div class="p-6">
+                <h2 id="modal-title" class="text-2xl font-bold mb-6 text-white border-b border-gray-700 pb-3">Log New Feedback</h2>
+                
+                <form id="feedbackForm" onsubmit="submitFeedback(event)">
+                    <input type="hidden" id="fb-id" value="">
+                    
+                    <!-- 行动项标记 / Action Item Toggle -->
+                    <div class="mb-4 bg-[#1e1e24] border border-gray-600 rounded-lg p-3">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="fb-actionable" class="w-5 h-5 accent-[#fb8500]">
+                            <span id="modal-action-text" class="text-sm font-bold text-[#fb8500]">🔥 Mark as Action Item (Pin to Top)</span>
+                        </label>
+                        
+                        <!-- 开发状态下拉框 -->
+                        <div id="status-container" class="mt-3 pt-3 border-t border-gray-700 hidden">
+                            <label id="modal-status-label" class="block text-xs font-medium text-gray-400 mb-2">Development Status</label>
+                            <select id="fb-status" class="w-full bg-[#2b2b36] border border-gray-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#fb8500]">
+                                <option value="todo" id="modal-status-todo">To Do</option>
+                                <option value="inprogress" id="modal-status-inprogress">In Progress</option>
+                                <option value="review" id="modal-status-review">Review</option>
+                                <option value="done" id="modal-status-done">Done</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 多选分类 / Multi-select Categories -->
+                    <div class="mb-4">
+                        <label id="modal-cat-title" class="block text-sm font-medium text-gray-300 mb-2">Categories (Select multiple tags)</label>
+                        <div class="grid grid-cols-2 gap-2 bg-[#1e1e24] border border-gray-600 rounded-lg p-3" id="fb-categories-container">
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="camera" data-label="Camera" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-camera">Camera</span></label>
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="controls" data-label="Controls" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-controls">Controls</span></label>
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="ld" data-label="Level Design" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-ld">Level Design</span></label>
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="art" data-label="Art" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-art">Art</span></label>
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="audio" data-label="Audio" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-audio">Audio</span></label>
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="tech" data-label="Tech" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-tech">Tech & Bugs</span></label>
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="items" data-label="Items" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-items">Items</span></label>
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer hover:text-white"><input type="checkbox" value="ui" data-label="UI" class="category-checkbox w-4 h-4 accent-[#fb8500]"><span class="i18n-cat-ui">UI</span></label>
+                        </div>
+                        <p id="cat-error" class="text-red-500 text-xs mt-1 hidden">Please select at least one category.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label id="modal-title-input" class="block text-sm font-medium text-gray-300 mb-2">Issue Title</label>
+                        <input type="text" id="fb-title" required placeholder="..." class="w-full bg-[#1e1e24] border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#fb8500]">
+                    </div>
+
+                    <div class="mb-6">
+                        <label id="modal-desc-input" class="block text-sm font-medium text-gray-300 mb-2">Detailed Description</label>
+                        <textarea id="fb-desc" required rows="4" placeholder="..." class="w-full bg-[#1e1e24] border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#fb8500] resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" id="modal-btn-cancel" onclick="closeModal()" class="px-5 py-2 rounded-lg font-medium text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">Cancel</button>
+                        <button type="submit" id="modal-btn-save" class="px-5 py-2 bg-[#fb8500] hover:bg-orange-600 text-white rounded-lg font-bold shadow transition-colors">Save Issue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认弹窗 -->
     <div id="deleteModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-[#2b2b36] rounded-xl shadow-2xl w-full max-w-sm border border-gray-700 p-6 text-center">
-            <h3 id="delete-confirm-text" class="mb-5 text-gray-300">Delete this item?</h3>
-            <div class="flex justify-center gap-3"><button onclick="closeDeleteModal()" id="del-btn-cancel" class="text-gray-400">Cancel</button><button onclick="confirmDelete()" id="del-btn-confirm" class="bg-red-600 px-4 py-2 rounded font-bold text-white">Delete</button></div>
+        <div class="bg-[#2b2b36] rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all border border-gray-700">
+            <div class="p-6 text-center">
+                <svg class="mx-auto mb-4 text-red-500 w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <h3 id="delete-confirm-text" class="mb-5 text-lg font-normal text-gray-300">Delete this feedback?</h3>
+                <div class="flex justify-center gap-3">
+                    <button onclick="closeDeleteModal()" type="button" id="del-btn-cancel" class="px-5 py-2 rounded-lg font-medium text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">Cancel</button>
+                    <button onclick="confirmDelete()" type="button" id="del-btn-confirm" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold shadow transition-colors">Delete</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- JavaScript 逻辑部分 / Application Logic with Firebase -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // 引入 Firebase SDK / Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
-        // ==============================================
-        // 核心数据字典
-        // ==============================================
-        const i18n = {
-            en: { mainTitle: 'C35 TGP2 Alpha Playtest Feedback Dashboard', tabBacklog: 'Feedback Backlog', tabSurvey: 'Survey Report', addFb: 'Add Feedback', fltAll: 'All', fltCamera: 'Camera', fltControls: 'Controls', fltLd: 'Level Design', fltArt: 'Art', fltAudio: 'Audio', fltTech: 'Tech', fltItems: 'Items', fltUi: 'UI', modalNew: 'Log New Feedback', modalEdit: 'Edit Feedback', deleteConfirm: 'Delete this feedback?', actionItem: 'Action Item', markAction: 'Action Item (Pin to Top)', survMetrics: 'Quantitative Metrics', survDemo: 'Insights', survText: 'Verbatim Feedback', colGood: 'Went Well', colBad: 'Went Wrong', colIdea: 'Better If', btnCancel: 'Cancel', btnSave: 'Save Issue', statusLabel: 'Status', statusTodo: 'To Do', statusInprogress: 'In Progress', statusReview: 'Review', statusDone: 'Done', demoPlaytime: 'Weekly Playtime: Majority 10-20 hrs', demoCam: 'Camera Satisfaction: Majority Dissatisfied', demoClarity: 'Track Clarity: Confusion in Gear Track' },
-            zh: { mainTitle: 'C35 TGP2 Alpha 游戏测试反馈看板', tabBacklog: '问题积压 (Backlog)', tabSurvey: '问卷数据', addFb: '添加反馈', fltAll: '全部', fltCamera: '相机', fltControls: '控制', fltLd: '关卡设计', fltArt: '美术', fltAudio: '音效', fltTech: '技术', fltItems: '道具', fltUi: '界面', modalNew: '记录新反馈', modalEdit: '编辑反馈', deleteConfirm: '确定删除吗？', actionItem: '待办行动项', markAction: '标记为行动项 (置顶)', survMetrics: '定量数据评分', survDemo: '核心发现', survText: '测试原文反馈', colGood: '优异部分', colBad: '存在问题', colIdea: '改进建议', btnCancel: '取消', btnSave: '保存数据', statusLabel: '开发进度状态', statusTodo: '待办', statusInprogress: '开发中', statusReview: '审核中', statusDone: '已完成', demoPlaytime: '每周时长: 多数10-20小时', demoCam: '相机满意度: 多数极不满意', demoClarity: '赛道清晰度: 齿轮赛道迷路' }
-        };
-
-        const surveyData = {
-            good: [ {en: "Finding the funnel and being able to go on top of the dome.", zh: "找到了漏斗路段并能开到穹顶之上。"}, {en: "Successfully getting one of the shortcuts was very satisfying.", zh: "成功进入捷径让人很有成就感。"}, {en: "Dodging the balls on the uphill slope was a fun element to the game.", zh: "在上坡路躲避球是非常有趣的元素。"}, {en: "I also enjoyed wedging myself between a gear and the floor.", zh: "我还很享受把自己卡在齿轮和地板之间的感觉。"}, {en: "The third track tunnel that cover all that can let the player rotate on the top is funny.", zh: "第三关全覆盖隧道能让玩家在顶部旋转，很有意思。"}, {en: "Feeling like playing in a pachinko machine :D", zh: "感觉像是在弹子机里玩耍 :D"} ],
-            bad: [ {en: "when my game glitched and i was on lap 2 for the next 3 laps", zh: "当我的游戏出Bug，接下来的3圈都卡在第2圈。"}, {en: "The moving rainbow road. This made me very nauseous.", zh: "移动的彩虹赛道让我非常恶心。"}, {en: "Any time the camera started dancing around unreliably, especially the boost moments.", zh: "任何相机开始不可控晃动的时候，尤其是加速瞬间。"}, {en: "I got effectively softlocked on the second track... literally could not play further.", zh: "我在第二关遭遇软锁定，完全没法继续玩。"}, {en: "Controls broadly felt very slippery and, more critically, imprecise.", zh: "操作整体感觉非常滑，更关键的是，不精准。"}, {en: "Engine sound is far too dominating and got annoying after awhile.", zh: "引擎声太霸道了，听久了很烦。"}, {en: "The camera would jump in and out of canned sequences pretty abruptly.", zh: "相机会在固定动画和正常视角间非常突兀地切换。"} ],
-            idea: [ {en: "Make the player able to steer immediately when they respawn (not wait 3s).", zh: "让玩家复位后立刻能转向，而不是等3秒。"}, {en: "Identify player character with stronger saturated colors or visual effects.", zh: "用更高饱和度的颜色或特效来标识玩家角色。"}, {en: "I will let the jump item to be a common skill. And give a short boost after jump.", zh: "我会让跳跃变成常规技能，并在跳跃后给个短程冲刺。"}, {en: "Try to make the control better and make the drift take shorter time to accelerate.", zh: "改善控制，让漂移加速时间更短。"}, {en: "More audio conveyance. Items, launchers, and lap completion in particular.", zh: "更多音频传达。特别是道具、发射器和过圈音效。"} ]
-        };
-
-        const defaultFeedbacks = [
-            { id: '1', actionable: true, status: 'inprogress', categories: ['camera'], categoryLabels: ['Camera'], title: 'Transitions & Motion Sickness', titleZh: '转场与晕动症', desc: 'Camera jumps abruptly in canned sequences. Launchers are nausea inducing.', descZh: '固定镜头切换突兀，发射器段落容易致吐。' },
-            { id: '2', actionable: true, status: 'todo', categories: ['controls'], categoryLabels: ['Controls'], title: 'Slippery Handling', titleZh: '手感过滑', desc: 'Controls are "slippery" and imprecise. Kart feels too light.', descZh: '操控感过滑且不精准，车身感觉太轻。' },
-            { id: '3', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], title: 'Gear Track Visibility', titleZh: '齿轮赛道可见度', desc: 'Open sections too dark. Lack of signs.', descZh: '开放区域太暗，缺乏指示牌。' },
-            { id: '4', actionable: true, status: 'todo', categories: ['tech'], categoryLabels: ['Tech'], title: 'Lap 2 Glitch', titleZh: '第二圈卡死Bug', desc: 'Players get stuck on Lap 2 for multiple laps.', descZh: '玩家连续跑几圈都卡在第二圈。' },
-            { id: '5', actionable: false, status: 'todo', categories: ['art'], categoryLabels: ['Art'], title: 'Material Similarity', titleZh: '材质相似度', desc: 'Tracks look too similar. Materials look untextured.', descZh: '赛道看起来太像了，材质像没贴图。' },
-            { id: '6', actionable: false, status: 'todo', categories: ['audio'], categoryLabels: ['Audio'], title: 'Engine Volume', titleZh: '引擎音量', desc: 'Engine sound is too dominating and annoying.', descZh: '引擎声音太大，让人心烦。' },
-            { id: 'hw_1', actionable: true, status: 'todo', categories: ['items'], categoryLabels: ['Items'], title: 'Pick-up Feedback', titleZh: '道具反馈', desc: 'Verbatim: "pick-ups. cannot feel". Needs better SFX/VFX.', descZh: '测试原文：“道具没感觉”。需要更好的音效视觉反馈。' },
-            { id: 'hw_2', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], title: 'Shortcut Clarity', titleZh: '捷径清晰度', desc: 'Verbatim: "Pipe shortcut looks like static mesh".', descZh: '测试原文：“管道捷径看着像装饰物”。' },
-            { id: 'docx_1', actionable: true, status: 'todo', categories: ['art', 'ui'], categoryLabels: ['Art', 'UI'], title: 'Ghost Face Confusion', titleZh: '幽灵脸误导', desc: 'Face on ghost vehicle confuses disoriented players.', descZh: '幽灵赛车背后的脸会误导迷失方向的玩家。' },
-            { id: 'docx_2', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], title: 'Track 3 Start Error', titleZh: '第三关起点错误', desc: 'Players drove wrong way on Track 3 start.', descZh: '玩家在第三关起点开反。' },
-            { id: 'hw_ctrl_1', actionable: false, status: 'todo', categories: ['controls'], categoryLabels: ['Controls'], categoryLabelsZh: ['控制'], title: 'Kart Parameters vs U-Tracks', titleZh: '赛车参数与U型赛道不符', desc: 'Kart parameters (drifting, steering) do not fit the U-shaped tracks well. Overall drift handling feels poor.', descZh: '赛车参数（漂移、转向）与U型赛道不匹配。整体漂移手感较差。' },
-            { id: 'hw_item_1', actionable: false, status: 'todo', categories: ['items', 'art'], categoryLabels: ['Items', 'Art'], categoryLabelsZh: ['道具', '美术'], title: 'Pick-up Drop Balance', titleZh: '道具掉落平衡', desc: 'Unfair item balancing: getting too many hazard pick-ups while in 1st place. The D20 dice effect is unclear.', descZh: '掉落不平衡：第一名拿到太多陷阱。D20骰子效果不明确。' },
-            { id: 'hw_ld_1', actionable: false, status: 'todo', categories: ['ld', 'items'], categoryLabels: ['Level Design', 'Items'], categoryLabelsZh: ['关卡设计', '道具'], title: 'Obstacle Density', titleZh: '障碍物密度', desc: 'Roulette track has too many colored balls. Gear track gears act too much like hard blockers.', descZh: '转盘赛道彩球过多。齿轮赛道的齿轮阻挡感太强。' },
-            { id: 'hw_ld_2', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Cable Way Balance & Track Splits', titleZh: '缆车平衡与赛道分支', desc: 'Cable ways are good, but balance could be a problem because players lose control for an extended period.', descZh: '缆车机制不错，但玩家长时间失控可能带来平衡问题。' },
-            { id: 'hw_cam_1', actionable: false, status: 'todo', categories: ['camera'], categoryLabels: ['Camera'], categoryLabelsZh: ['相机'], title: 'Transitions & Wavy Motion', titleZh: '镜头过渡与波浪移动', desc: 'Camera transitions are not smooth. The Ribbon Road camera is too "wavy". Ryan cannon tunnel is confusing.', descZh: '相机过渡不平滑。彩带赛道相机太“波浪”。Ryan大炮隧道令人困惑。' },
-            { id: 'hw_aud_1', actionable: false, status: 'todo', categories: ['audio'], categoryLabels: ['Audio'], categoryLabelsZh: ['音效'], title: 'Collision SFX Issue', titleZh: '碰撞音效问题', desc: 'Collision sound effects (SFX) do not properly convey the impact of the crash.', descZh: '碰撞音效（SFX）未能准确传达出撞击的力度感。' },
-            { id: 'cam_3', actionable: false, status: 'todo', categories: ['camera'], categoryLabels: ['Camera'], categoryLabelsZh: ['相机'], title: 'Drift Targeting & Edges', titleZh: '漂移视角与赛道边缘', desc: 'Camera re-orients frustratingly near track edges (dizziness). Fails to look forward enough on U-shaped tracks.', descZh: '靠近边缘时相机反复重定向（致晕）。U型弯无法看清前方。' },
-            { id: 'ctrl_3', actionable: false, status: 'todo', categories: ['controls'], categoryLabels: ['Controls'], categoryLabelsZh: ['控制'], title: 'Collision & Respawn Issues', titleZh: '碰撞与复位机制问题', desc: 'Instant speed drop to zero on hazards. 3-sec delay to steer after respawning.', descZh: '撞击危险物速度瞬间归零。复位后有3秒转向僵直。' },
-            { id: 'ctrl_4', actionable: false, status: 'todo', categories: ['controls', 'ld'], categoryLabels: ['Controls', 'Level Design'], categoryLabelsZh: ['控制', '关卡设计'], title: 'Mechanics Additions (Wishlist)', titleZh: '机制愿景与建议', desc: 'Player wants to grind along the "rail" of the PCG track Mario Kart-style.', descZh: '玩家希望能在PCG赛道边缘像马里奥赛车一样滑行（Grind）。' },
-            { id: 'ld_2', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Obstacle Intuition (Bounce/Funnel)', titleZh: '障碍物直觉（弹跳板/漏斗）', desc: 'Funnel hole design is misleading (looks like a challenge, is actually a trap).', descZh: '漏斗洞口有误导性（看似挑战实为陷阱）。' },
-            { id: 'ld_4', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Track Flow & Pacing', titleZh: '赛道流畅度与节奏', desc: 'Ribbon road is mechanically punishing. Track 3 tight turns feel "pinchy" (needs "surfing" flow).', descZh: '彩带路机制惩罚性太强。Track 3急弯感觉很卡（需要冲浪般的流畅感）。' },
-            { id: 'ld_5', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Onboarding / Tutorialization', titleZh: '新手引导与教学', desc: 'Ideally, bounce pads, shortcuts, cableways, and items should be taught 1 at a time.', descZh: '理想情况下，跳跃板、捷径、缆车和道具应该逐一教授给新玩家。' },
-            { id: 'art_2', actionable: false, status: 'todo', categories: ['art'], categoryLabels: ['Art'], categoryLabelsZh: ['美术'], title: 'Lighting & Environment Artifacts', titleZh: '光照与环境画面瑕疵', desc: 'Levels overexposed with flashing shadows on objects. Fuzzy/blurry textures around the orb on Track 2.', descZh: '关卡过度曝光，物体有闪烁阴影。Track 2球体周围有模糊纹理。' },
-            { id: 'art_3', actionable: false, status: 'todo', categories: ['art'], categoryLabels: ['Art'], categoryLabelsZh: ['美术'], title: 'Character & Model Inconsistencies', titleZh: '角色与模型不一致', desc: 'Playtesters couldn\'t tell which character they were. Soldier kart spawns sideways.', descZh: '玩家分不清自己选了谁。士兵车侧向生成。' },
-            { id: 'tech_2', actionable: false, status: 'todo', categories: ['tech'], categoryLabels: ['Tech'], categoryLabelsZh: ['技术'], title: 'Performance & Optimization', titleZh: '性能与优化', desc: 'Huge frame rate drop in 4/16 build caused by tunnel. Lowest FPS hit 2. Vsync screen tear.', descZh: '4/16版本隧道导致帧率暴跌至2帧。所有关卡均有画面撕裂。' },
-            { id: 'tech_3', actionable: false, status: 'todo', categories: ['tech'], categoryLabels: ['Tech'], categoryLabelsZh: ['技术'], title: 'Collision & Despawn Logic', titleZh: '碰撞与卸载逻辑', desc: 'No collision on Track 2 gears. Colored environment balls disappear right in front of the player.', descZh: 'Track 2齿轮无碰撞体积。彩色环境球在玩家面前凭空消失卸载。' },
-            { id: 'ui_1', actionable: false, status: 'todo', categories: ['ui'], categoryLabels: ['UI'], categoryLabelsZh: ['界面'], title: 'Multiplayer & Screen Scaling', titleZh: '多人游戏与屏幕缩放', desc: 'UI does not scale in multiplayer. Jetpack/AI not seen in 4 player demo.', descZh: '多人模式UI不缩放。4人demo中未看到喷气背包/AI。' },
-            { id: 'ui_2', actionable: false, status: 'todo', categories: ['ui', 'art'], categoryLabels: ['UI', 'Art'], categoryLabelsZh: ['界面', '美术'], title: 'HUD Conveyance & Visual Effects', titleZh: 'HUD传达与视觉特效', desc: 'Conveyance of items succeeding/failing/incoming to target needs clear UI display.', descZh: '道具成功/失败/来袭需要清晰的UI显示。' },
-            { id: 'ui_3', actionable: false, status: 'todo', categories: ['ui'], categoryLabels: ['UI'], categoryLabelsZh: ['界面'], title: 'Menu & Pre-Race Flow', titleZh: '菜单与赛前流程', desc: 'Kart confirmation not clear in selection screen. Need to preview the level before starting.', descZh: '选车界面确认状态不清晰。大奖赛开始前需预览关卡。' }
-        ];
-
-        let windowContext = window;
-        windowContext.currentLang = 'en';
-        windowContext.allFeedbacks = [];
-        windowContext.currentFilter = 'all';
-        windowContext.itemToDelete = null;
-
-        // ==============================================
-        // Firebase 专属配置与完整防崩溃逻辑
-        // ==============================================
-        const fallbackConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyDdH9c9bGJWfCWultxFKxYqWrM_y4l2NNE",
             authDomain: "c35-tgp2.firebaseapp.com",
             databaseURL: "https://c35-tgp2-default-rtdb.firebaseio.com",
@@ -221,326 +348,509 @@
             messagingSenderId: "662001378169",
             appId: "1:662001378169:web:ba25548520272904a6c5a8",
             measurementId: "G-GY5ZRMG5EL"
-        }; 
+        };
 
-        const isCloudEnabled = typeof __firebase_config !== 'undefined' || Object.keys(fallbackConfig).length > 0;
-        
-        let db = null;
-        let appId = 'c35-tgp2-dashboard-db';
+        // 初始化 Firebase / Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
+        const feedbacksRef = ref(db, 'feedbacks'); // 数据根节点
 
-        function showSync(isSyncing) {
-            const ind = document.getElementById('sync-indicator');
-            if(isSyncing) { ind.classList.remove('synced'); ind.classList.add('syncing'); }
-            else { setTimeout(() => { ind.classList.add('synced'); ind.classList.remove('syncing'); }, 500); }
+        // 国际化词典 / i18n Dictionary
+        const i18n = {
+            'en': {
+                mainTitle: 'C35 TGP2 Alpha Playtest Feedback Dashboard',
+                tabBacklog: '📋 Feedback Backlog',
+                tabSurvey: '📊 Survey Report (23 Responses)',
+                addFb: 'Add Feedback',
+                fltAll: 'All Feedback',
+                fltCamera: 'Camera',
+                fltControls: 'Controls & Physics',
+                fltLd: 'Level Design',
+                fltArt: 'Art',
+                fltAudio: 'Audio',
+                fltTech: 'Tech & Bugs',
+                fltItems: 'Items',
+                fltUi: 'UI',
+                modalNew: 'Log New Feedback',
+                modalEdit: 'Edit Feedback',
+                deleteConfirm: 'Delete this feedback?',
+                actionItem: '🔥 Action Item',
+                markAction: '🔥 Mark as Action Item (Pin to Top)',
+                modalCat: 'Categories (Select multiple tags)',
+                modalTitle: 'Issue Title',
+                modalDesc: 'Detailed Description',
+                btnCancel: 'Cancel',
+                btnSave: 'Save Issue',
+                btnDelete: 'Delete',
+                statusLabel: 'Development Status',
+                statusTodo: 'To Do',
+                statusInprogress: 'In Progress',
+                statusReview: 'Review',
+                statusDone: 'Done',
+                survMetrics: 'Quantitative Metrics (Mean out of 5.00)',
+                survDemo: 'Player Demographics',
+                survText: 'Qualitative Responses',
+                colGood: '🌟 What Went Well',
+                colBad: '❌ What Went Wrong',
+                colIdea: '💡 Even Better If...'
+            },
+            'zh': {
+                mainTitle: 'C35 TGP2 Alpha 游戏测试反馈看板',
+                tabBacklog: '📋 待办问题积压 (Backlog)',
+                tabSurvey: '📊 问卷数据报告 (23份回收)',
+                addFb: '添加反馈',
+                fltAll: '全部反馈',
+                fltCamera: '相机',
+                fltControls: '控制 & 物理',
+                fltLd: '关卡设计',
+                fltArt: '美术',
+                fltAudio: '音效',
+                fltTech: '技术 & Bug',
+                fltItems: '道具',
+                fltUi: '界面',
+                modalNew: '记录新反馈',
+                modalEdit: '编辑反馈',
+                deleteConfirm: '确定要删除这条反馈吗？',
+                actionItem: '🔥 待办行动项',
+                markAction: '🔥 标记为行动项 (自动置顶)',
+                modalCat: '反馈分类 (可多选)',
+                modalTitle: '问题标题',
+                modalDesc: '详细描述',
+                btnCancel: '取消',
+                btnSave: '保存数据',
+                btnDelete: '删除',
+                statusLabel: '开发进度状态',
+                statusTodo: '待办',
+                statusInprogress: '开发中',
+                statusReview: '审核中',
+                statusDone: '已完成',
+                survMetrics: '定量数据评分 (满分 5.00)',
+                survDemo: '玩家群体画像',
+                survText: '定性文本反馈',
+                colGood: '🌟 表现优异的部分',
+                colBad: '❌ 体验糟糕的部分',
+                colIdea: '💡 改进建议'
+            }
+        };
+        let currentLang = 'en';
+
+        // ==========================================
+        // 视图切换逻辑 / View Switching Logic
+        // ==========================================
+        function switchView(viewName) {
+            const viewBacklog = document.getElementById('view-backlog');
+            const viewSurvey = document.getElementById('view-survey');
+            const tabBacklog = document.getElementById('tab-backlog');
+            const tabSurvey = document.getElementById('tab-survey');
+            const btnAdd = document.getElementById('btn-add-feedback');
+
+            if (viewName === 'backlog') {
+                viewBacklog.classList.remove('hidden-view');
+                viewSurvey.classList.add('hidden-view');
+                tabBacklog.classList.add('active');
+                tabSurvey.classList.remove('active');
+                btnAdd.classList.remove('hidden-view'); 
+            } else if (viewName === 'survey') {
+                viewBacklog.classList.add('hidden-view');
+                viewSurvey.classList.remove('hidden-view');
+                tabBacklog.classList.remove('active');
+                tabSurvey.classList.add('active');
+                btnAdd.classList.add('hidden-view'); 
+            }
         }
 
-        function updateCloudStatusText(status) {
-            const statusEl = document.getElementById('cloud-status');
-            if(status === 'cloud') statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span> Cloud Sync Active`;
-            else statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-gray-500 inline-block"></span> Local Mode (No BaaS Config)`;
-        }
+        // ==========================================
+        // 基础积压数据 / Backlog Data
+        // ==========================================
+        const defaultFeedbacks = [
+            { id: 'hw_ctrl_1', actionable: false, status: 'todo', categories: ['controls'], categoryLabels: ['Controls'], categoryLabelsZh: ['控制'], title: 'Kart Parameters vs U-Tracks', titleZh: '赛车参数与U型赛道不符', desc: 'Kart parameters (drifting, steering) do not fit the U-shaped tracks well. Overall drift handling feels poor ("drift not good") and needs better visual/audio conveyance.', descZh: '赛车参数（漂移、转向）与U型赛道不匹配。整体漂移手感较差，需要更好的视听反馈。' },
+            { id: 'hw_item_1', actionable: false, status: 'todo', categories: ['items', 'art'], categoryLabels: ['Items', 'Art'], categoryLabelsZh: ['道具', '美术'], title: 'Pick-up Feedback & Drop Balance', titleZh: '道具反馈与掉落平衡', desc: 'Pick-ups do not "pop" or draw attention; players cannot feel when they collect one. Unfair item balancing: getting too many hazard pick-ups while in 1st place. The D20 dice effect is unclear. Note: Feather item feels good, shield needs to be more apparent.', descZh: '道具视觉不够醒目，玩家感觉不到拾取。掉落不平衡：第一名拿到太多陷阱。D20骰子效果不明确。注：羽毛手感好，护盾需更明显。' },
+            { id: 'hw_ld_1', actionable: false, status: 'todo', categories: ['ld', 'items'], categoryLabels: ['Level Design', 'Items'], categoryLabelsZh: ['关卡设计', '道具'], title: 'Obstacle Density & Boost Placement', titleZh: '障碍物密度与加速带位置', desc: 'Roulette track has too many colored balls. Gear track gears act too much like hard blockers. Too many boost rings are placed immediately before sharp turns. Suggestion: Add pick-ups on jump pads.', descZh: '转盘赛道彩球过多。齿轮赛道的齿轮阻挡感太强。急弯前放置了过多加速环。建议：在跳跃板上放置道具。' },
+            { id: 'hw_ld_2', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Cable Way Balance & Track Splits', titleZh: '缆车平衡与赛道分支', desc: 'Cable ways are good, but balance could be a problem because players lose control for an extended period. Track splits and symbolic arrow signs need clearer conveyance.', descZh: '缆车机制不错，但玩家长时间失控可能带来平衡问题。赛道分支和箭头标志需要更清晰的引导。' },
+            { id: 'hw_cam_1', actionable: false, status: 'todo', categories: ['camera'], categoryLabels: ['Camera'], categoryLabelsZh: ['相机'], title: 'Transitions, Edges & Wavy Motion', titleZh: '镜头过渡、边缘与波浪移动', desc: 'Camera transitions are not smooth. Camera behaves poorly at track edges. The Ribbon Road camera is too "wavy". Ryan cannon tunnel is confusing, and its animation should only play 1 time.', descZh: '相机过渡不平滑。赛道边缘相机表现不佳。彩带赛道相机太“波浪”。Ryan大炮隧道令人困惑，动画播放1次即可。' },
+            { id: 'hw_art_1', actionable: false, status: 'todo', categories: ['art'], categoryLabels: ['Art'], categoryLabelsZh: ['美术'], title: 'Repetitive Textures & Lighting', titleZh: '重复的材质与光照', desc: 'Art style and textures feel too repetitive/samey across levels. Certain sections are too dark. (Positives noted: overall visual consistency, cool tracks, fun levels, and memorable moments).', descZh: '各关卡美术风格和材质感觉太重复。部分区域过暗。（优点：整体视觉一致、赛道酷炫、有记忆点）。' },
+            { id: 'hw_aud_1', actionable: false, status: 'todo', categories: ['audio'], categoryLabels: ['Audio'], categoryLabelsZh: ['音效'], title: 'Collision SFX Issue', titleZh: '碰撞音效问题', desc: 'Collision sound effects (SFX) do not properly convey the impact of the crash.', descZh: '碰撞音效（SFX）未能准确传达出撞击的力度感。' },
+            { id: 'cam_1', actionable: false, status: 'todo', categories: ['camera'], categoryLabels: ['Camera'], categoryLabelsZh: ['相机'], title: 'Motion Sickness & Tunnel Jitter', titleZh: '晕动症与隧道镜头抖动', desc: 'Nausea reported during auto-launchers and moving Rainbow Road. Tunnels cause confusion/disorientation; camera jitters inside and gets "A patterns" at top speed.', descZh: '自动弹射和移动彩虹赛道导致眩晕。隧道内极易迷失方向；相机在内抖动剧烈，极速时出现画面错误。' },
+            { id: 'cam_2', actionable: false, status: 'todo', categories: ['camera'], categoryLabels: ['Camera'], categoryLabelsZh: ['相机'], title: 'Abrupt Transitions & Cableways', titleZh: '突兀的切换与缆车视角', desc: 'Abrupt jumping in/out of canned sequences feels like a bug. Cinematic cameras end too late. Cableway camera is extremely disorienting; players cannot follow the ball. Ryan Cannon camera needs to be less jerky.', descZh: '过场动画进出极其突兀，像Bug。电影视角结束太晚。缆车视角令人迷失，无法追踪球体。大炮视角需要更平滑。' },
+            { id: 'cam_3', actionable: false, status: 'todo', categories: ['camera'], categoryLabels: ['Camera'], categoryLabelsZh: ['相机'], title: 'U-Turn, Drift Targeting & Edges', titleZh: 'U型弯、漂移视角与赛道边缘', desc: 'Camera re-orients frustratingly near track edges (dizziness). Fails to look forward enough on U-shaped tracks. Gary wants the camera to look where he is aiming while using charge drift.', descZh: '靠近边缘时相机反复重定向（致晕）。U型弯无法看清前方。玩家希望蓄力漂移时相机能朝向瞄准的方向。' },
+            { id: 'ctrl_1', actionable: false, status: 'todo', categories: ['controls'], categoryLabels: ['Controls'], categoryLabelsZh: ['控制'], title: 'Slippery Handling & Input', titleZh: '手感过滑与输入问题', desc: 'Karts feel too light ("slippery"), prone to oversteering/turning backwards. Player taped stick instead of holding it down. Shangqui requested Mouse & Keyboard support.', descZh: '赛车感觉太轻（滑），易转向过度或原地调头。玩家宁愿胶带绑住摇杆。请求加入键鼠支持。' },
+            { id: 'ctrl_2', actionable: false, status: 'todo', categories: ['controls'], categoryLabels: ['Controls'], categoryLabelsZh: ['控制'], title: 'Drifting Flow & Penalties', titleZh: '漂移流畅度与减速惩罚', desc: 'Drifting drains momentum ("feels like charging up"), discouraging use. Functionality is not clear to new players. Spitting areas felt too narrow, further discouraging drifting.', descZh: '漂移极其消耗动量（像在原地蓄力），阻碍玩家使用。新手不清楚功能。喷涂加速区域太窄，进一步削弱漂移收益。' },
+            { id: 'ctrl_3', actionable: false, status: 'todo', categories: ['controls'], categoryLabels: ['Controls'], categoryLabelsZh: ['控制'], title: 'Collision & Respawn Issues', titleZh: '碰撞与复位机制问题', desc: 'Instant speed drop to zero on hazards. 3-sec delay to steer after respawning. Players respawn facing wrong direction or on uphill escalators for no reason. Gary wants to charge drift while waiting to respawn.', descZh: '撞击危险物速度瞬间归零。复位后有3秒转向僵直。玩家复位后经常面朝反方向或莫名出现在上坡。希望复位等待时能蓄力漂移。' },
+            { id: 'ctrl_4', actionable: false, status: 'todo', categories: ['controls', 'ld'], categoryLabels: ['Controls', 'Level Design'], categoryLabelsZh: ['控制', '关卡设计'], title: 'Mechanics Additions (Wishlist)', titleZh: '机制愿景与建议', desc: 'Player wants to grind along the "rail" of the PCG track Mario Kart-style. Bounce pads should have different physics depending on which area of the pad is hit.', descZh: '玩家希望能在PCG赛道边缘像马里奥赛车一样滑行（Grind）。跳跃板应根据踩击区域提供不同的物理反馈。' },
+            { id: 'ld_1', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Signage & Path Confusion', titleZh: '路线指引与迷路', desc: 'Gear Track open sections are too dark/lack cues. Players drove wrong way at Track 3 start. Distracted by first appearance of Rainbow Road. Recommend adding fog/mist to lowest ground to signal death planes.', descZh: '齿轮赛道开放区域太暗且缺乏指引。玩家在Track 3起点开反。被首次登场的彩虹赛道分散注意力。建议在底层加雾气以提示死亡边界。' },
+            { id: 'ld_2', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Obstacle Intuition (Bounce/Funnel)', titleZh: '障碍物直觉（弹跳板/漏斗）', desc: 'Funnel hole design is misleading (looks like a challenge, is actually a trap). Bounce pads don\'t read as pads at a glance; flat pads are not intuitive, angled ones are better.', descZh: '漏斗洞口有误导性（看似挑战实为陷阱）。跳跃板乍看缺乏辨识度；平底跳板不直观，带角度的更好。' },
+            { id: 'ld_3', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Cableways & Shortcuts', titleZh: '缆车与捷径', desc: 'Pipe shortcuts look like static meshes (need boost pads/cues). Cableway entrances need better conveyance; playtesters are getting sucked into Track 2 cableways unintentionally.', descZh: '管道捷径像静态背景（需要加速带提示）。缆车入口需要更好的引导；测试者总是意外被吸进Track 2的缆车。' },
+            { id: 'ld_4', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Track Flow & Pacing', titleZh: '赛道流畅度与节奏', desc: 'Ribbon road is mechanically punishing. Track 3 tight turns feel "pinchy" (needs "surfing" flow). Tunnel 1 works better than Tunnel 2 (analyze differences, add "end caps"). Sharp turns lack high walls.', descZh: '彩带路机制惩罚性太强。Track 3急弯感觉很卡（需要冲浪般的流畅感）。隧道1体验优于隧道2（需分析差异）。急弯缺乏高墙护栏。' },
+            { id: 'ld_5', actionable: false, status: 'todo', categories: ['ld'], categoryLabels: ['Level Design'], categoryLabelsZh: ['关卡设计'], title: 'Onboarding / Tutorialization', titleZh: '新手引导与教学', desc: 'Ideally, bounce pads, shortcuts, cableways, and items should be taught 1 at a time in a relatively safe environment for new players.', descZh: '理想情况下，跳跃板、捷径、缆车和道具应该在相对安全的环境中，逐一教授给新玩家。' },
+            { id: 'art_1', actionable: false, status: 'todo', categories: ['art'], categoryLabels: ['Art'], categoryLabelsZh: ['美术'], title: 'Textures & Toy Theme Readability', titleZh: '材质与玩具主题识别度', desc: 'Materials look "untextured" (textures too fine). Color scheme didn\'t sell "Toy Factory" vibe. Soft plastics recommended over hard surfaces (reduces lighting artifacts). Blue carpet vibe praised.', descZh: '材质像“未贴图”（纹理太细）。配色未体现“玩具工厂”感。建议使用软塑料而非硬表面（可减少光照瑕疵）。蓝色地毯氛围受好评。' },
+            { id: 'art_2', actionable: false, status: 'todo', categories: ['art'], categoryLabels: ['Art'], categoryLabelsZh: ['美术'], title: 'Lighting & Environment Artifacts', titleZh: '光照与环境画面瑕疵', desc: 'Levels overexposed with flashing shadows on objects. Fuzzy/blurry textures around the orb on Track 2. Texture issues on floors near giant gears on Track 2.', descZh: '关卡过度曝光，物体有闪烁阴影。Track 2球体周围有模糊纹理。Track 2巨型齿轮附近地面纹理错误。' },
+            { id: 'art_3', actionable: false, status: 'todo', categories: ['art'], categoryLabels: ['Art'], categoryLabelsZh: ['美术'], title: 'Character & Model Inconsistencies', titleZh: '角色与模型不一致', desc: 'Playtesters couldn\'t tell which character they were. Ghost vehicle face confuses players/hides hamster. Soldier kart spawns sideways. Polished env models lack materials compared to demo. Ramps still use primitive proxies.', descZh: '玩家分不清自己选了谁。幽灵车脸部遮挡仓鼠。士兵车侧向生成。精细环境模型缺乏材质（相比demo）。坡道仍使用原始白模。' },
+            { id: 'art_4', actionable: false, status: 'todo', categories: ['art', 'items'], categoryLabels: ['Art', 'Items'], categoryLabelsZh: ['美术', '道具'], title: 'Item Box Visibility', titleZh: '道具箱可见度', desc: 'New item box design blends into the background. Box is covered in floating dots, making it difficult to identify at a glance.', descZh: '新道具箱设计融入了背景。箱体被漂浮点覆盖，难以一眼识别。' },
+            { id: 'aud_1', actionable: false, status: 'todo', categories: ['audio'], categoryLabels: ['Audio'], categoryLabelsZh: ['音效'], title: 'Audio Conveyance & Music Bugs', titleZh: '音效传达与音乐Bug', desc: 'Engine sounds are too dominating. Crucial feedback sounds (items, launchers) are missing/too quiet. Background music occasionally stops completely.', descZh: '引擎声太大。关键反馈音（道具、发射器）丢失或音量太小。背景音乐偶尔会完全停止。' },
+            { id: 'tech_1', actionable: false, status: 'todo', categories: ['tech'], categoryLabels: ['Tech'], categoryLabelsZh: ['技术'], title: 'Critical Bugs & Crashes', titleZh: '严重Bug与崩溃', desc: 'Fatal error on spiral on Track 3. Players get stuck on Lap 2. Wrong way indicator gets stuck halfway on screen. D20 UI freezing made players think all items were broken.', descZh: 'Track 3螺旋路段引发致命错误。玩家卡在第2圈。逆行指示器卡在屏幕中间。D20 UI冻结让玩家以为道具系统全坏了。' },
+            { id: 'tech_2', actionable: false, status: 'todo', categories: ['tech'], categoryLabels: ['Tech'], categoryLabelsZh: ['技术'], title: 'Performance & Optimization', titleZh: '性能与优化', desc: '"A smooth 30 FPS is better than a spikey 60 FPS". Huge frame rate drop in 4/16 build caused by tunnel. Lowest FPS hit 2. Vsync screen tear in all levels. Periodic large stutters reported.', descZh: '“稳定30帧好过波动的60帧”。4/16版本隧道导致帧率暴跌至2帧。所有关卡均有画面撕裂。报告有周期性大卡顿。' },
+            { id: 'tech_3', actionable: false, status: 'todo', categories: ['tech'], categoryLabels: ['Tech'], categoryLabelsZh: ['技术'], title: 'Collision & Despawn Logic', titleZh: '碰撞与卸载逻辑', desc: 'No collision on Track 2 gears. No collision on certain environment rings after falling off track. Colored environment balls disappear/despawn right in front of the player.', descZh: 'Track 2齿轮无碰撞体积。掉出赛道后某些环境环无碰撞。彩色环境球在玩家面前凭空消失卸载。' },
+            { id: 'ui_1', actionable: false, status: 'todo', categories: ['ui'], categoryLabels: ['UI'], categoryLabelsZh: ['界面'], title: 'Multiplayer & Screen Scaling', titleZh: '多人游戏与屏幕缩放', desc: 'UI does not scale in multiplayer (Recommend cutting mini-map). Need better conveyance of who is playing which character in split-screen. Jetpack/AI not seen in 4 player demo.', descZh: '多人模式UI不缩放（建议砍掉小地图）。分屏模式需要更好地提示谁在控制谁。4人demo中未看到喷气背包/AI。' },
+            { id: 'ui_2', actionable: false, status: 'todo', categories: ['ui', 'art'], categoryLabels: ['UI', 'Art'], categoryLabelsZh: ['界面', '美术'], title: 'HUD Conveyance & Visual Effects', titleZh: 'HUD传达与视觉特效', desc: 'Conveyance of items succeeding/failing/incoming to target needs clear UI display. Visual effect needed on HUD for boosting. Placement fonts need Gold/Silver/Bronze styling.', descZh: '道具成功/失败/来袭需要清晰的UI显示。加速时HUD需要视觉特效。名次字体需要金/银/铜样式。' },
+            { id: 'ui_3', actionable: false, status: 'todo', categories: ['ui'], categoryLabels: ['UI'], categoryLabelsZh: ['界面'], title: 'Menu & Pre-Race Flow', titleZh: '菜单与赛前流程', desc: 'Kart confirmation not clear in selection screen. Players start races in a gaggle. Need to preview the level before starting in Grand Prix mode. Levels need to be named and displayed.', descZh: '选车界面确认状态不清晰。玩家起步挤成一团。大奖赛开始前需预览关卡。关卡需要命名并展示出来。' }
+        ];
 
-        if (isCloudEnabled) {
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : fallbackConfig;
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            db = getFirestore(app);
-            if (typeof __app_id !== 'undefined') appId = __app_id;
+        let allFeedbacks = [];
+        let currentFilter = 'all';
+        let itemToDelete = null;
 
-            // ⚠️ 核心修复：完整的 try-catch，拦截一切 auth/api-key-not-valid 报错
-            async function initAuth() {
-                try {
-                    showSync(true);
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
+        // ==========================================
+        // 实时数据监听与同步 / Firebase Real-time Sync
+        // ==========================================
+        onValue(feedbacksRef, (snapshot) => {
+            const data = snapshot.val();
+            let needsUpdate = false;
+
+            if (data) {
+                // 确保数据含有必需的数组结构 / Ensure arrays exist
+                allFeedbacks = data.map(item => {
+                    if (!item.categories) item.categories = [];
+                    if (!item.categoryLabels) item.categoryLabels = [];
+                    if (!item.categoryLabelsZh) item.categoryLabelsZh = [];
+                    return item;
+                });
+
+                // 合并可能新增的默认反馈 / Merge default feedbacks if they don't exist
+                defaultFeedbacks.forEach(defItem => {
+                    if (!allFeedbacks.find(fb => fb.id === defItem.id)) {
+                        allFeedbacks.unshift(defItem);
+                        needsUpdate = true;
                     }
-                } catch (error) {
-                    console.warn("Firebase Auth Warning (Fallback to Local):", error.message);
-                    // 遇到错误立刻关闭转圈并降级！
-                    showSync(false);
-                    loadFeedbacksLocal();
-                }
-            }
-
-            initAuth();
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) setupRealtimeSync();
-            });
-        }
-
-        function setupRealtimeSync() {
-            showSync(true);
-            updateCloudStatusText('cloud');
-            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'feedbacks');
-            
-            onSnapshot(colRef, (snapshot) => {
-                const fetchedData = [];
-                snapshot.forEach(doc => fetchedData.push(doc.data()));
-
-                if (fetchedData.length === 0) {
-                    Promise.all(defaultFeedbacks.map(fb => {
-                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', fb.id);
-                        return setDoc(docRef, fb);
-                    })).then(() => {
-                        showSync(false);
-                    }).catch(error => {
-                        console.error("Initial data push error:", error);
-                        showSync(false);
-                    });
-                } else {
-                    windowContext.allFeedbacks = fetchedData;
-                    renderGrid();
-                    showSync(false);
-                }
-            }, (error) => {
-                // ⚠️ 核心修复：捕获数据库读写权限报错
-                console.warn("Cloud Sync Warning (Permissions/Key):", error.message);
-                updateCloudStatusText('local');
-                loadFeedbacksLocal();
-                showSync(false);
-            });
-        }
-
-        async function saveToDatabase(item) {
-            if (isCloudEnabled && db) {
-                try {
-                    showSync(true);
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', item.id);
-                    await setDoc(docRef, item);
-                    showSync(false);
-                } catch (err) {
-                    console.error("Save failed, using local DB:", err);
-                    saveToStorage(); renderGrid(); showSync(false);
-                }
+                });
             } else {
-                saveToStorage();
-                renderGrid();
+                // 数据库为空时初始化 / Initialize if DB is empty
+                allFeedbacks = JSON.parse(JSON.stringify(defaultFeedbacks));
+                needsUpdate = true;
             }
-        }
 
-        async function deleteFromDatabase(id) {
-            if (isCloudEnabled && db) {
-                try {
-                    showSync(true);
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', id);
-                    await deleteDoc(docRef);
-                    showSync(false);
-                } catch (err) {
-                    console.error("Delete failed, using local DB:", err);
-                    windowContext.allFeedbacks = windowContext.allFeedbacks.filter(f => f.id !== id);
-                    saveToStorage(); renderGrid(); showSync(false);
-                }
-            } else {
-                windowContext.allFeedbacks = windowContext.allFeedbacks.filter(f => f.id !== id);
-                saveToStorage();
-                renderGrid();
+            if (needsUpdate) {
+                saveToFirebase();
             }
-        }
 
-        // ==============================================
-        // 本地降级逻辑 (Local Storage Fallback)
-        // ==============================================
-        function loadFeedbacksLocal() {
-            updateCloudStatusText('local');
-            const saved = localStorage.getItem('tgp2_master_feedbacks');
-            if (saved) {
-                windowContext.allFeedbacks = JSON.parse(saved);
-                defaultFeedbacks.forEach(d => { if (!windowContext.allFeedbacks.find(a => a.id === d.id)) windowContext.allFeedbacks.push(d); });
-            } else {
-                windowContext.allFeedbacks = JSON.parse(JSON.stringify(defaultFeedbacks));
-            }
             renderGrid();
-            showSync(false); // 确保在本地模式下完全关闭转圈
-        }
-        function saveToStorage() { localStorage.setItem('tgp2_master_feedbacks', JSON.stringify(windowContext.allFeedbacks)); }
+        });
 
-        // ==============================================
-        // UI & 视图逻辑
-        // ==============================================
+        function saveToFirebase() {
+            // 将数据实时写入 Firebase / Write data directly to Firebase
+            set(feedbacksRef, allFeedbacks);
+        }
+
         window.onload = () => {
-            if (!isCloudEnabled) loadFeedbacksLocal();
             updateStaticTexts();
-            renderSurveyQuotes();
             document.getElementById('fb-actionable').addEventListener('change', function() {
                 document.getElementById('status-container').classList.toggle('hidden', !this.checked);
             });
-        };
-
-        windowContext.switchView = function(view) {
-            document.getElementById('view-backlog').classList.toggle('hidden-view', view !== 'backlog');
-            document.getElementById('view-survey').classList.toggle('hidden-view', view !== 'survey');
-            document.getElementById('tab-backlog').classList.toggle('active', view === 'backlog');
-            document.getElementById('tab-survey').classList.toggle('active', view === 'survey');
-            document.getElementById('btn-add-feedback').classList.toggle('hidden-view', view === 'survey');
         }
 
-        windowContext.toggleLanguage = function() {
-            windowContext.currentLang = windowContext.currentLang === 'en' ? 'zh' : 'en';
+        // ==========================================
+        // 国际化双语逻辑 / Translation Update
+        // ==========================================
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
             updateStaticTexts();
             renderGrid();
-            renderSurveyQuotes();
         }
 
         function updateStaticTexts() {
-            const T = i18n[windowContext.currentLang];
-            document.getElementById('main-title').innerText = T.mainTitle;
-            document.getElementById('tab-backlog').innerText = T.tabBacklog;
-            document.getElementById('tab-survey').innerText = T.tabSurvey;
-            document.getElementById('add-fb-text').innerText = T.addFb;
-            document.getElementById('flt-all').innerText = T.fltAll;
-            ['Camera', 'Controls', 'Ld', 'Art', 'Audio', 'Tech', 'Items', 'Ui'].forEach(cat => {
-                const el = document.getElementById('flt-' + cat.toLowerCase());
-                if (el) el.innerText = T['flt' + cat];
-            });
-            document.getElementById('survey-title-metrics').innerText = T.survMetrics;
-            document.getElementById('survey-title-demo').innerText = T.survDemo;
-            document.getElementById('survey-title-text').innerText = T.survText;
-            document.getElementById('col-good').innerText = T.colGood;
-            document.getElementById('col-bad').innerText = T.colBad;
-            document.getElementById('col-idea').innerText = T.colIdea;
-            document.querySelector('.i18n-demo-playtime').innerText = T.demoPlaytime;
-            document.querySelector('.i18n-demo-cam').innerText = T.demoCam;
-            document.querySelector('.i18n-demo-clarity').innerText = T.demoClarity;
-            document.getElementById('modal-action-text').innerText = T.markAction;
-            document.getElementById('delete-confirm-text').innerText = T.deleteConfirm;
-            document.getElementById('modal-btn-cancel').innerText = T.btnCancel;
-            document.getElementById('modal-btn-save').innerText = T.btnSave;
+            document.getElementById('main-title').innerText = i18n[currentLang].mainTitle;
+            document.getElementById('tab-backlog').innerText = i18n[currentLang].tabBacklog;
+            document.getElementById('tab-survey').innerText = i18n[currentLang].tabSurvey;
+            document.getElementById('add-fb-text').innerText = i18n[currentLang].addFb;
+            document.getElementById('flt-all').innerText = i18n[currentLang].fltAll;
+            document.getElementById('flt-camera').innerText = i18n[currentLang].fltCamera;
+            document.getElementById('flt-controls').innerText = i18n[currentLang].fltControls;
+            document.getElementById('flt-ld').innerText = i18n[currentLang].fltLd;
+            document.getElementById('flt-art').innerText = i18n[currentLang].fltArt;
+            document.getElementById('flt-audio').innerText = i18n[currentLang].fltAudio;
+            document.getElementById('flt-tech').innerText = i18n[currentLang].fltTech;
+            document.getElementById('flt-items').innerText = i18n[currentLang].fltItems;
+            document.getElementById('flt-ui').innerText = i18n[currentLang].fltUi;
+            document.getElementById('delete-confirm-text').innerText = i18n[currentLang].deleteConfirm;
+            document.getElementById('modal-action-text').innerText = i18n[currentLang].markAction;
+            document.getElementById('modal-cat-title').innerText = i18n[currentLang].modalCat;
+            document.getElementById('modal-title-input').innerText = i18n[currentLang].modalTitle;
+            document.getElementById('modal-desc-input').innerText = i18n[currentLang].modalDesc;
+            document.getElementById('modal-btn-cancel').innerText = i18n[currentLang].btnCancel;
+            document.getElementById('modal-btn-save').innerText = i18n[currentLang].btnSave;
+            document.getElementById('del-btn-cancel').innerText = i18n[currentLang].btnCancel;
+            document.getElementById('del-btn-confirm').innerText = i18n[currentLang].btnDelete;
+            
+            document.getElementById('modal-status-label').innerText = i18n[currentLang].statusLabel;
+            document.getElementById('modal-status-todo').innerText = i18n[currentLang].statusTodo;
+            document.getElementById('modal-status-inprogress').innerText = i18n[currentLang].statusInprogress;
+            document.getElementById('modal-status-review').innerText = i18n[currentLang].statusReview;
+            document.getElementById('modal-status-done').innerText = i18n[currentLang].statusDone;
+
+            document.getElementById('survey-title-metrics').innerText = i18n[currentLang].survMetrics;
+            document.getElementById('survey-title-demo').innerText = i18n[currentLang].survDemo;
+            document.getElementById('survey-title-text').innerText = i18n[currentLang].survText;
+            document.getElementById('col-good').innerText = i18n[currentLang].colGood;
+            document.getElementById('col-bad').innerText = i18n[currentLang].colBad;
+            document.getElementById('col-idea').innerText = i18n[currentLang].colIdea;
+
+            document.querySelector('.i18n-cat-camera').innerText = i18n[currentLang].fltCamera;
+            document.querySelector('.i18n-cat-controls').innerText = i18n[currentLang].fltControls;
+            document.querySelector('.i18n-cat-ld').innerText = i18n[currentLang].fltLd;
+            document.querySelector('.i18n-cat-art').innerText = i18n[currentLang].fltArt;
+            document.querySelector('.i18n-cat-audio').innerText = i18n[currentLang].fltAudio;
+            document.querySelector('.i18n-cat-tech').innerText = i18n[currentLang].fltTech;
+            document.querySelector('.i18n-cat-items').innerText = i18n[currentLang].fltItems;
+            document.querySelector('.i18n-cat-ui').innerText = i18n[currentLang].fltUi;
         }
 
-        function renderSurveyQuotes() {
-            ['good', 'bad', 'idea'].forEach(type => {
-                const container = document.getElementById('container-' + type);
-                container.innerHTML = '';
-                surveyData[type].forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = `survey-quote-card quote-${type}`;
-                    div.innerHTML = `<p class="text-sm italic text-gray-300">"${windowContext.currentLang === 'zh' ? item.zh : item.en}"</p>`;
-                    container.appendChild(div);
-                });
-            });
+        function toggleActionable(id) {
+            const index = allFeedbacks.findIndex(fb => fb.id === id);
+            if (index !== -1) {
+                allFeedbacks[index].actionable = !allFeedbacks[index].actionable;
+                if (allFeedbacks[index].actionable && !allFeedbacks[index].status) {
+                    allFeedbacks[index].status = 'todo';
+                }
+                saveToFirebase();
+            }
+        }
+
+        function updateStatus(id, newStatus) {
+            const index = allFeedbacks.findIndex(fb => fb.id === id);
+            if (index !== -1) {
+                allFeedbacks[index].status = newStatus;
+                saveToFirebase();
+            }
         }
 
         function renderGrid() {
             const grid = document.getElementById('feedback-grid');
-            grid.innerHTML = '';
-            
-            const sorted = [...windowContext.allFeedbacks].sort((a, b) => {
-                if (a.actionable !== b.actionable) return b.actionable ? -1 : 1;
-                return (a.categoryLabels?.[0] || "").localeCompare(b.categoryLabels?.[0] || "");
-            });
-            
-            const starOutlineSvg = `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>`;
-            const starSolidSvg = `<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`;
-            const editSvg = `<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>`;
-            const deleteSvg = `<svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>`;
+            grid.innerHTML = ''; 
 
-            sorted.forEach(item => {
-                if (windowContext.currentFilter !== 'all' && (!item.categories || !item.categories.includes(windowContext.currentFilter))) return;
-                
+            const groupedFeedbacks = [...allFeedbacks].sort((a, b) => {
+                const aAction = a.actionable ? 1 : 0;
+                const bAction = b.actionable ? 1 : 0;
+                if (aAction !== bAction) return bAction - aAction;
+
+                const labelA = (a.categoryLabels && a.categoryLabels.length > 0) ? a.categoryLabels[0] : '';
+                const labelB = (b.categoryLabels && b.categoryLabels.length > 0) ? b.categoryLabels[0] : '';
+                return labelA.localeCompare(labelB);
+            });
+
+            groupedFeedbacks.forEach(item => {
+                if (currentFilter !== 'all' && (!item.categories || !item.categories.includes(currentFilter))) return;
+
                 const card = document.createElement('div');
-                const border = item.actionable ? 'border-[#fb8500] shadow-[0_0_10px_rgba(251,133,0,0.2)]' : 'border-gray-700';
-                card.className = `card rounded-xl p-5 flex flex-col gap-3 border ${border} ${item.status === 'done' ? 'is-done' : ''} relative group`;
-                
-                const title = windowContext.currentLang === 'zh' ? (item.titleZh || item.title) : item.title;
-                const desc = windowContext.currentLang === 'zh' ? (item.descZh || item.desc) : item.desc;
-                const tags = (item.categories || []).map(c => `<span class="tag ${c}">${c.toUpperCase()}</span>`).join('');
-                
-                let statusHtml = '';
+                const borderColorClass = item.actionable ? 'border-[#fb8500] shadow-[0_0_10px_rgba(251,133,0,0.2)]' : 'border-gray-700';
+                const opacityClass = (item.actionable && item.status === 'done') ? 'is-done' : ''; 
+                card.className = `card rounded-xl p-5 flex flex-col gap-3 border ${borderColorClass} ${opacityClass} relative group`;
+
+                const displayTitle = (currentLang === 'zh' && item.titleZh) ? item.titleZh : item.title;
+                const displayDesc = (currentLang === 'zh' && item.descZh) ? item.descZh : item.desc;
+
+                let tagsHtml = (item.categories || []).map((cat, idx) => {
+                    const label = (currentLang === 'zh' && item.categoryLabelsZh && item.categoryLabelsZh[idx]) ? item.categoryLabelsZh[idx] : item.categoryLabels[idx];
+                    return `<span class="tag ${cat}">${label}</span>`;
+                }).join('');
+
+                let topBadgesHtml = '';
                 if (item.actionable) {
-                    statusHtml = `<div class="flex items-center gap-2 mb-2"><span class="tag action-item m-0 text-[10px]">${i18n[windowContext.currentLang].actionItem}</span>
-                    <select onchange="updateStatus('${item.id}', this.value)" class="status-select status-${item.status}">
-                    <option value="todo" ${item.status === 'todo' ? 'selected' : ''}>${i18n[windowContext.currentLang].statusTodo || 'TODO'}</option>
-                    <option value="inprogress" ${item.status === 'inprogress' ? 'selected' : ''}>${i18n[windowContext.currentLang].statusInprogress || 'IP'}</option>
-                    <option value="review" ${item.status === 'review' ? 'selected' : ''}>${i18n[windowContext.currentLang].statusReview || 'REV'}</option>
-                    <option value="done" ${item.status === 'done' ? 'selected' : ''}>${i18n[windowContext.currentLang].statusDone || 'DONE'}</option></select></div>`;
+                    topBadgesHtml = `
+                        <div class="flex items-center flex-wrap gap-2 mb-2 w-full">
+                            <span class="tag action-item m-0">${i18n[currentLang].actionItem}</span>
+                            <select onchange="updateStatus('${item.id}', this.value)" class="status-select status-${item.status || 'todo'}">
+                                <option value="todo" ${item.status === 'todo' ? 'selected' : ''}>${i18n[currentLang].statusTodo}</option>
+                                <option value="inprogress" ${item.status === 'inprogress' ? 'selected' : ''}>${i18n[currentLang].statusInprogress}</option>
+                                <option value="review" ${item.status === 'review' ? 'selected' : ''}>${i18n[currentLang].statusReview}</option>
+                                <option value="done" ${item.status === 'done' ? 'selected' : ''}>${i18n[currentLang].statusDone}</option>
+                            </select>
+                        </div>
+                    `;
                 }
 
-                card.innerHTML = `${statusHtml}<div class="flex justify-between"><div>${tags}</div><div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onclick="toggleActionable('${item.id}')" class="${item.actionable ? 'text-[#fb8500]' : 'text-gray-400'} hover:text-[#fb8500]">${item.actionable ? starSolidSvg : starOutlineSvg}</button>
-                <button onclick="openModal('${item.id}')" class="text-gray-400 hover:text-blue-400">${editSvg}</button>
-                <button onclick="triggerDelete('${item.id}')" class="text-gray-400 hover:text-red-500">${deleteSvg}</button></div></div>
-                <h3 class="font-bold text-white text-sm">${title}</h3><p class="text-xs text-gray-400 leading-relaxed">${desc}</p>`;
+                const starSvg = item.actionable 
+                    ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`
+                    : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>`;
+
+                const starColor = item.actionable ? 'text-[#fb8500]' : 'text-gray-400';
+
+                card.innerHTML = `
+                    ${topBadgesHtml}
+                    <div class="flex justify-between items-start">
+                        <div class="flex flex-wrap flex-1">${tagsHtml}</div>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                            <button onclick="toggleActionable('${item.id}')" class="${starColor} hover:text-[#fb8500] transition-colors cursor-pointer" title="Toggle Action Item">
+                                ${starSvg}
+                            </button>
+                            <button onclick="openModal('${item.id}')" class="text-gray-400 hover:text-[#fb8500] transition-colors cursor-pointer" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                            </button>
+                            <button onclick="triggerDelete('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer" title="Delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-white leading-tight mt-1">${displayTitle}</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">${displayDesc}</p>
+                `;
                 grid.appendChild(card);
             });
         }
 
-        windowContext.filterSelection = function(c) { windowContext.currentFilter = c; document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.id === 'flt-'+c)); renderGrid(); }
-        windowContext.openModal = function(id = null) {
-            const form = document.getElementById('feedbackForm');
-            form.reset();
-            const actionableCheck = document.getElementById('fb-actionable');
-            const statusContainer = document.getElementById('status-container');
-            if (id) {
-                const item = windowContext.allFeedbacks.find(f => f.id === id);
-                document.getElementById('fb-id').value = item.id;
-                document.getElementById('fb-title').value = item.title;
-                document.getElementById('fb-desc').value = item.desc;
-                actionableCheck.checked = !!item.actionable;
-                statusContainer.classList.toggle('hidden', !item.actionable);
-                document.getElementById('fb-status').value = item.status || 'todo';
-                document.querySelectorAll('.category-checkbox').forEach(cb => {
-                    if (item.categories.includes(cb.value)) cb.checked = true;
-                });
-            } else {
-                document.getElementById('fb-id').value = '';
-                statusContainer.classList.add('hidden');
-            }
-            document.getElementById('addModal').classList.remove('hidden');
-        }
-        windowContext.closeModal = function() { document.getElementById('addModal').classList.add('hidden'); }
-        windowContext.triggerDelete = function(id) { windowContext.itemToDelete = id; document.getElementById('deleteModal').classList.remove('hidden'); }
-        windowContext.closeDeleteModal = function() { document.getElementById('deleteModal').classList.add('hidden'); }
-        
-        windowContext.confirmDelete = async function() { 
-            if(windowContext.itemToDelete){ 
-                await deleteFromDatabase(windowContext.itemToDelete);
-                windowContext.closeDeleteModal(); 
-            } 
-        }
-        
-        windowContext.updateStatus = async function(id, s) { 
-            const i = windowContext.allFeedbacks.findIndex(f => f.id === id); 
-            if(i!==-1){ 
-                windowContext.allFeedbacks[i].status = s; 
-                await saveToDatabase(windowContext.allFeedbacks[i]);
-            } 
-        }
-        
-        windowContext.toggleActionable = async function(id) { 
-            const i = windowContext.allFeedbacks.findIndex(f => f.id === id); 
-            if(i!==-1){ 
-                windowContext.allFeedbacks[i].actionable = !windowContext.allFeedbacks[i].actionable; 
-                if(!windowContext.allFeedbacks[i].status) windowContext.allFeedbacks[i].status='todo'; 
-                await saveToDatabase(windowContext.allFeedbacks[i]);
-            } 
-        }
-        
-        windowContext.submitFeedback = async function(e) {
-            e.preventDefault();
-            const id = document.getElementById('fb-id').value;
-            const title = document.getElementById('fb-title').value;
-            const desc = document.getElementById('fb-desc').value;
-            const actionable = document.getElementById('fb-actionable').checked;
-            const status = document.getElementById('fb-status').value;
-            const checkedCats = Array.from(document.querySelectorAll('.category-checkbox:checked')).map(c => c.value);
-            const labels = Array.from(document.querySelectorAll('.category-checkbox:checked')).map(c => c.getAttribute('data-label'));
+        function filterSelection(category) {
+            currentFilter = category;
+            
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('active');
+                const onclickText = btn.getAttribute('onclick');
+                if (onclickText.includes(`'${category}'`)) {
+                    btn.classList.add('active');
+                }
+            });
 
-            let itemToSave;
-            if (id) {
-                const idx = windowContext.allFeedbacks.findIndex(f => f.id === id);
-                itemToSave = { ...windowContext.allFeedbacks[idx], title, desc, actionable, status, categories: checkedCats, categoryLabels: labels };
-                windowContext.allFeedbacks[idx] = itemToSave;
+            renderGrid();
+        }
+
+        // ==========================================
+        // 模态框逻辑 / Modal Handling
+        // ==========================================
+        function openModal(id = null) {
+            const modal = document.getElementById('addModal');
+            const titleEl = document.getElementById('modal-title');
+            const idInput = document.getElementById('fb-id');
+            const actionableInput = document.getElementById('fb-actionable');
+            const statusContainer = document.getElementById('status-container');
+            const statusInput = document.getElementById('fb-status');
+            const errorMsg = document.getElementById('cat-error');
+            const checkboxes = document.querySelectorAll('.category-checkbox');
+            
+            errorMsg.classList.add('hidden');
+            checkboxes.forEach(cb => cb.checked = false); 
+            actionableInput.checked = false;
+            statusContainer.classList.add('hidden');
+            statusInput.value = 'todo';
+            
+            if (id && typeof id === 'string') {
+                titleEl.innerText = i18n[currentLang].modalEdit;
+                const item = allFeedbacks.find(fb => fb.id === id);
+                if (item) {
+                    idInput.value = item.id;
+                    document.getElementById('fb-title').value = item.title;
+                    document.getElementById('fb-desc').value = item.desc;
+                    actionableInput.checked = !!item.actionable;
+                    
+                    if (item.actionable) {
+                        statusContainer.classList.remove('hidden');
+                        statusInput.value = item.status || 'todo';
+                    }
+                    
+                    if (item.categories) {
+                        checkboxes.forEach(cb => {
+                            if (item.categories.includes(cb.value)) cb.checked = true;
+                        });
+                    }
+                }
             } else {
-                itemToSave = { id: Date.now().toString(), title, desc, actionable, status, categories: checkedCats, categoryLabels: labels };
-                windowContext.allFeedbacks.unshift(itemToSave);
+                titleEl.innerText = i18n[currentLang].modalNew;
+                idInput.value = "";
+                document.getElementById('fb-title').value = "";
+                document.getElementById('fb-desc').value = "";
             }
             
-            await saveToDatabase(itemToSave);
-            windowContext.closeModal();
+            modal.classList.remove('hidden');
         }
+
+        function closeModal() {
+            const modal = document.getElementById('addModal');
+            const form = document.getElementById('feedbackForm');
+            modal.classList.add('hidden');
+            document.getElementById('cat-error').classList.add('hidden');
+            form.reset(); 
+        }
+
+        function triggerDelete(id) {
+            const delModal = document.getElementById('deleteModal');
+            itemToDelete = id;
+            delModal.classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            const delModal = document.getElementById('deleteModal');
+            itemToDelete = null;
+            delModal.classList.add('hidden');
+        }
+
+        function confirmDelete() {
+            if (itemToDelete) {
+                allFeedbacks = allFeedbacks.filter(fb => fb.id !== itemToDelete);
+                saveToFirebase();
+                closeDeleteModal();
+            }
+        }
+
+        function submitFeedback(e) {
+            e.preventDefault(); 
+            
+            const errorMsg = document.getElementById('cat-error');
+            const checkedBoxes = Array.from(document.querySelectorAll('.category-checkbox:checked'));
+            
+            if (checkedBoxes.length === 0) {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            errorMsg.classList.add('hidden');
+
+            const idInput = document.getElementById('fb-id').value;
+            const isActionable = document.getElementById('fb-actionable').checked;
+            const formStatus = document.getElementById('fb-status').value;
+            const categories = checkedBoxes.map(cb => cb.value);
+            const categoryLabels = checkedBoxes.map(cb => cb.getAttribute('data-label'));
+            
+            if (idInput) {
+                const index = allFeedbacks.findIndex(fb => fb.id === idInput);
+                if (index !== -1) {
+                    allFeedbacks[index] = {
+                        ...allFeedbacks[index],
+                        actionable: isActionable,
+                        status: isActionable ? formStatus : 'todo', 
+                        categories: categories,
+                        categoryLabels: categoryLabels,
+                        title: document.getElementById('fb-title').value,
+                        desc: document.getElementById('fb-desc').value
+                    };
+                }
+            } else {
+                const newFeedback = {
+                    id: 'custom_' + Date.now(),
+                    actionable: isActionable,
+                    status: isActionable ? formStatus : 'todo',
+                    categories: categories,
+                    categoryLabels: categoryLabels,
+                    title: document.getElementById('fb-title').value,
+                    desc: document.getElementById('fb-desc').value
+                };
+                allFeedbacks.unshift(newFeedback);
+            }
+
+            saveToFirebase();
+            closeModal();
+        }
+
+        // 挂载函数到全局 window 对象，使得 HTML 里的 inline onclick 能够访问
+        // Expose functions to global scope so inline HTML event handlers work
+        window.switchView = switchView;
+        window.toggleLanguage = toggleLanguage;
+        window.filterSelection = filterSelection;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.toggleActionable = toggleActionable;
+        window.updateStatus = updateStatus;
+        window.triggerDelete = triggerDelete;
+        window.closeDeleteModal = closeDeleteModal;
+        window.confirmDelete = confirmDelete;
+        window.submitFeedback = submitFeedback;
+
     </script>
 </body>
 </html>
