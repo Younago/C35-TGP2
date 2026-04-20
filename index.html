@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C35 TGP2 Alpha Playtest Feedback Dashboard</title>
+    <!-- 使用 Tailwind CSS 加速样式开发 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -49,7 +50,7 @@
     <header class="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-700 pb-6">
         <div>
             <h1 id="main-title" class="text-3xl font-bold text-[#fb8500] mb-2">C35 TGP2 Alpha Playtest Feedback Dashboard</h1>
-            <p id="cloud-status" class="text-xs text-gray-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span> Cloud Sync Active</p>
+            <p id="cloud-status" class="text-xs text-gray-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-gray-500 inline-block"></span> Initializing...</p>
         </div>
         <div class="flex items-center gap-3">
             <button onclick="toggleLanguage()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 transition-transform hover:scale-105">
@@ -107,9 +108,9 @@
         </div>
         <h2 id="survey-title-text" class="text-2xl font-bold text-white mb-6 uppercase tracking-wider">Verbatim Tester Feedback</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#22c55e] text-white font-bold py-3 text-center" id="col-good">🌟 What Went Well</div><div class="p-4 flex flex-col" id="container-good"></div></div>
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#ef4444] text-white font-bold py-3 text-center" id="col-bad">❌ What Went Wrong</div><div class="p-4 flex flex-col" id="container-bad"></div></div>
-            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#3a86ff] text-white font-bold py-3 text-center" id="col-idea">💡 Even Better If...</div><div class="p-4 flex flex-col" id="container-idea"></div></div>
+            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#22c55e] text-white font-bold py-3 text-center" id="col-good">What Went Well</div><div class="p-4 flex flex-col" id="container-good"></div></div>
+            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#ef4444] text-white font-bold py-3 text-center" id="col-bad">What Went Wrong</div><div class="p-4 flex flex-col" id="container-bad"></div></div>
+            <div class="bg-[#2b2b36] rounded-xl overflow-hidden border border-gray-700 shadow-xl"><div class="bg-[#3a86ff] text-white font-bold py-3 text-center" id="col-idea">Even Better If...</div><div class="p-4 flex flex-col" id="container-idea"></div></div>
         </div>
     </div>
 
@@ -153,13 +154,12 @@
         </div>
     </div>
 
-    <!-- 核心逻辑：模块化引入云存储支持 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 语言配置与字典
+        // 语言字典
         const i18n = {
             en: { mainTitle: 'C35 TGP2 Alpha Playtest Feedback Dashboard', tabBacklog: 'Feedback Backlog', tabSurvey: 'Survey Report', addFb: 'Add Feedback', fltAll: 'All', fltCamera: 'Camera', fltControls: 'Controls', fltLd: 'Level Design', fltArt: 'Art', fltAudio: 'Audio', fltTech: 'Tech', fltItems: 'Items', fltUi: 'UI', modalNew: 'Log New Feedback', modalEdit: 'Edit Feedback', deleteConfirm: 'Delete this feedback?', actionItem: 'Action Item', markAction: 'Action Item (Pin to Top)', survMetrics: 'Quantitative Metrics', survDemo: 'Insights', survText: 'Verbatim Feedback', colGood: 'Went Well', colBad: 'Went Wrong', colIdea: 'Better If', btnCancel: 'Cancel', btnSave: 'Save Issue', statusLabel: 'Status', statusTodo: 'To Do', statusInprogress: 'In Progress', statusReview: 'Review', statusDone: 'Done', demoPlaytime: 'Weekly Playtime: Majority 10-20 hrs', demoCam: 'Camera Satisfaction: Majority Dissatisfied', demoClarity: 'Track Clarity: Confusion in Gear Track' },
             zh: { mainTitle: 'C35 TGP2 Alpha 游戏测试反馈看板', tabBacklog: '问题积压 (Backlog)', tabSurvey: '问卷数据', addFb: '添加反馈', fltAll: '全部', fltCamera: '相机', fltControls: '控制', fltLd: '关卡设计', fltArt: '美术', fltAudio: '音效', fltTech: '技术', fltItems: '道具', fltUi: '界面', modalNew: '记录新反馈', modalEdit: '编辑反馈', deleteConfirm: '确定删除吗？', actionItem: '待办行动项', markAction: '标记为行动项 (置顶)', survMetrics: '定量数据评分', survDemo: '核心发现', survText: '测试原文反馈', colGood: '优异部分', colBad: '存在问题', colIdea: '改进建议', btnCancel: '取消', btnSave: '保存数据', statusLabel: '开发进度状态', statusTodo: '待办', statusInprogress: '开发中', statusReview: '审核中', statusDone: '已完成', demoPlaytime: '每周时长: 多数10-20小时', demoCam: '相机满意度: 多数极不满意', demoClarity: '赛道清晰度: 齿轮赛道迷路' }
@@ -210,17 +210,19 @@
         windowContext.itemToDelete = null;
 
         // ==============================================
-        // 这一部分就是您刚刚生成的 Firebase 专属代码！
+        // 这是完全正确拼装好的 Firebase 专属配置
         // ==============================================
         const fallbackConfig = {
             apiKey: "AIzaSyDdH9c9bGJWFcWultxFkXYqWrM_y4l2NNE",
             authDomain: "c35-tgp2.firebaseapp.com",
+            databaseURL: "https://c35-tgp2-default-rtdb.firebaseio.com",
             projectId: "c35-tgp2",
             storageBucket: "c35-tgp2.firebasestorage.app",
             messagingSenderId: "662001378169",
             appId: "1:662001378169:web:ba25548520272904a6c5a8",
             measurementId: "G-GY5ZRMG5EL"
         }; 
+
         const isCloudEnabled = typeof __firebase_config !== 'undefined' || Object.keys(fallbackConfig).length > 0;
         
         let db = null;
@@ -260,6 +262,9 @@
             else statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-gray-500 inline-block"></span> Local Mode (No BaaS Config)`;
         }
 
+        // ==============================================
+        // 修复版的云同步挂载函数 (解决了转圈卡死问题)
+        // ==============================================
         function setupRealtimeSync() {
             showSync(true);
             updateCloudStatusText('cloud');
@@ -270,9 +275,14 @@
                 snapshot.forEach(doc => fetchedData.push(doc.data()));
 
                 if (fetchedData.length === 0) {
-                    defaultFeedbacks.forEach(async (fb) => {
+                    Promise.all(defaultFeedbacks.map(fb => {
                         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'feedbacks', fb.id);
-                        await setDoc(docRef, fb);
+                        return setDoc(docRef, fb);
+                    })).then(() => {
+                        showSync(false);
+                    }).catch(error => {
+                        console.error("Initial data push error:", error);
+                        showSync(false);
                     });
                 } else {
                     windowContext.allFeedbacks = fetchedData;
@@ -283,6 +293,7 @@
                 console.error("Cloud Sync Error:", error);
                 updateCloudStatusText('local');
                 loadFeedbacksLocal();
+                showSync(false);
             });
         }
 
